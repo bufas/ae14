@@ -5,9 +5,9 @@ class PredSearchTree {
 
 public:
 
-	PredSearchTree(std::vector<int> v) explicit {}
-	virtual ~PredSearchTree() {}
+    PredSearchTree(std::vector<int> v) explicit {}
+    virtual ~PredSearchTree() {}
 
-	virtual int pred(int x) = 0;
+    virtual int pred(int x) = 0;
 
 };
