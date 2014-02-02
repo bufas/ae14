@@ -16,10 +16,10 @@ public:
     virtual int pred(int x) {
         int pred = -1;
         for (auto it = elems.begin(); it != elems.end(); ++it) {
-            if (*it == x) return pred;
+            if (*it > x) return pred;
             pred = *it;
         }
-        return -1;
+        return pred;
     }
 
 };
