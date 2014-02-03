@@ -3,25 +3,22 @@
 #include <vector>
 #include <algorithm>
 
-class SortedBinarySearch : public PredSearchTree {
+class InorderBinarySearch : public PredSearchTree {
 
 private:
     std::vector<int> elems;
 
 public:
 
-    LinearSearch(const std::vector<int> &v) : elems(v) {
+    InorderBinarySearch(const std::vector<int> &v) : elems(v) {
         std::sort(elems.begin(), elems.end());
     }
 
-    /**
-     * This is most likely wrong
-     */
-    virtual int pred(int x) {
+    int pred(int x) {
         int s = 0;
         int e = elems.size() - 1;
 
-        while (s < e) {
+        while (s <= e) {
             int mid = (e + s) / 2;
             if (elems[mid] == x) return x;
             
@@ -29,7 +26,11 @@ public:
             else e = mid - 1;
         }
 
+        // TODO clean this shit up (most of it is to handle sizes 0 and 1)
+        if (e == -1) return -1;
+        if (s > e) return elems[e];
         return elems[s];
     }
+
 
 };
