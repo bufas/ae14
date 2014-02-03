@@ -10,7 +10,7 @@ private:
 public:
 
     LinearSearch(std::vector<int> v) : elems(v) {
-        std::sort(elems.begin(), elems.begin());
+        std::sort(elems.begin(), elems.end());
     }
 
     virtual int pred(int x) {
