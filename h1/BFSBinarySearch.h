@@ -25,7 +25,7 @@ private:
 
 public:
 
-    LinearSearch(std::vector<int> v) : elems(v) {
+    BFSBinarySearch(std::vector<int> v) : elems(v) {
         std::sort(elems.begin(), elems.end());
         make_bfs_layout(v, 0, elems.size(), 0);
     }
