@@ -17,7 +17,7 @@ private:
     void make_bfs_layout(const std::vector<int> &v, int s, int e, int idx) {
         if (s > e) return;
 
-        int mid = (e + s) / 2;
+        int mid = (e + s + 1) / 2;
 
         tree[idx] = v[mid];
 
