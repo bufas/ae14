@@ -1,3 +1,5 @@
+#include <vector>
+#include <algorithm>
 
 class SortedBinarySearch : public PredSearchTree {
 
