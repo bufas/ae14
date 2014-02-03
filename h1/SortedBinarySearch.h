@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <algorithm>
 
@@ -8,7 +10,7 @@ private:
 
 public:
 
-    LinearSearch(std::vector<int> v) : elems(v) {
+    LinearSearch(const std::vector<int> &v) : elems(v) {
         std::sort(elems.begin(), elems.end());
     }
 
@@ -17,7 +19,7 @@ public:
      */
     virtual int pred(int x) {
         int s = 0;
-        int e = elems.size();
+        int e = elems.size() - 1;
 
         while (s < e) {
             int mid = (e + s) / 2;
