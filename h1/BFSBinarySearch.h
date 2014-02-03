@@ -19,8 +19,8 @@ private:
 
         tree[idx] = mid;
 
-        make_dfs_layout(s, mid - 1, child_left(idx));
-        make_dfs_layout(mid + 1, e, child_right(idx));
+        make_bfs_layout(s, mid - 1, child_left(idx));
+        make_bfs_layout(mid + 1, e, child_right(idx));
     }
 
 public:
