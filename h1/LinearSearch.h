@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <algorithm>
-
+#include "PredSearchTree.h"
 
 class LinearSearch : public PredSearchTree {
 
