@@ -33,13 +33,6 @@ public:
     }
 
     int pred(int x) {
-        // Print the tree
-        std::cout << "Printing the tree" << std::endl;
-        for (auto it = tree.begin(); it != tree.end(); ++it) {
-            std::cout << *it << " ";
-        }
-        std::cout << std::endl;
-
         if (tree.empty()) return -1;
 
         int idx = 0; // Set index to root
