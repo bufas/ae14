@@ -139,7 +139,7 @@ void print_output_header(const Params &p) {
     std::cout << "# \tmax tree size (log) : " << p.max_log_tree_size << std::endl;
     std::cout << "# \tnumber of queries   : " << p.no_of_queries << std::endl;
     std::cout << "# \trandom seed         : " << p.random_seed << std::endl;
-    std::cout << std::endl;
+    std::cout << "#" << std::endl;
     std::cout << "# Datalines: log(tree size), tree size, #searches, time in us" << std::endl;
 }
 
