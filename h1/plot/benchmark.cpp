@@ -47,6 +47,14 @@ struct Params {
     int random_seed;
 };
 
+int intify_param(const char arg[], int default_val) {
+    std::istringstream iss(arg);
+    int res;
+    
+    if (iss >> res) return res; // Successful conversion
+    return default_val;         // Unsuccessful conversion, return default value
+}
+
 Params parse_arguments(int argc, char *argv[]) {
     // Check if there is enough parameters and print help message if not
     if (argc < 5) {
@@ -74,35 +82,11 @@ Params parse_arguments(int argc, char *argv[]) {
         exit(-1);
     }
 
-    // TODO I don't know how to do this properly
-    // Set tree size bounds and number of queries
-    std::istringstream *iss = new std::istringstream(argv[2]);
-    if (!(*iss >> p.min_log_tree_size)) {
-        std::cout << "minimum tree size must be an integer. " << argv[2] << " was given." << std::endl;
-        exit(-1);
-    }
-
-    iss = new std::istringstream(argv[3]);
-    if (!(*iss >> p.max_log_tree_size)) {
-        std::cout << "maximum tree size must be an integer. " << argv[3] << " was given." << std::endl;
-        exit(-1);
-    }
-
-    iss = new std::istringstream(argv[4]);
-    if (!(*iss >> p.no_of_queries)) {
-        std::cout << "number of queries must be an integer. " << argv[4] << " was given." << std::endl;
-        exit(-1);
-    }
-
-    // Set random seed
-    if (argc >= 6) {
-        iss = new std::istringstream(argv[5]);
-        if (!(*iss >> p.random_seed)) {
-            std::cout << "random seed must be an integer. " << argv[5] << " was given." << std::endl;
-            exit(-1);
-        }
-    }
-    else p.random_seed = time(nullptr);
+    // Set tree size bounds, number of queries, and random seed
+    p.min_log_tree_size = intify_param(argv[2], 10);
+    p.max_log_tree_size = intify_param(argv[3], 20);
+    p.no_of_queries     = intify_param(argv[4], 1000);
+    p.random_seed       = (argc >= 6) ? intify_param(argv[5], 0) : time(nullptr);
 
     return p;
 }
