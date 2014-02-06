@@ -14,7 +14,7 @@ public:
         std::sort(elems.begin(), elems.end());
     }
 
-    int pred(int x) {
+    int pred(int x) const {
         int s = 0;
         int e = elems.size() - 1;
 

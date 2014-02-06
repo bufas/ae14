@@ -15,7 +15,7 @@ public:
         std::sort(elems.begin(), elems.end());
     }
 
-    virtual int pred(int x) {
+    virtual int pred(int x) const {
         int pred = -1;
         for (auto it = elems.begin(); it != elems.end(); ++it) {
             if (*it > x) return pred;

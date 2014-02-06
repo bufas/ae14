@@ -11,8 +11,8 @@ private:
     std::vector<int> height_of_subtree;
 
     // We need to add a little extra because we index from 0
-    int child_left(int idx) { return idx + 1; }
-    int child_right(int idx) { return idx + (2 << (height_of_subtree[idx] - 1)); }
+    int child_left(int idx) const { return idx + 1; }
+    int child_right(int idx) const { return idx + (2 << (height_of_subtree[idx] - 1)); }
 
     void make_dfs_layout(const std::vector<int> &v, int s, int e, int idx, int h) {
         int mid = (e + s) / 2;
@@ -35,7 +35,7 @@ public:
     /**
      * This is most likely wrong
      */
-    virtual int pred(int x) {
+    virtual int pred(int x) const {
         int idx = 0;
 
         while (idx < tree.size()) {

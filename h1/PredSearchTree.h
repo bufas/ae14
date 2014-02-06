@@ -9,6 +9,6 @@ public:
 
     virtual ~PredSearchTree() {}
 
-    virtual int pred(int x) = 0;
+    virtual int pred(int x) const = 0;
 
 };

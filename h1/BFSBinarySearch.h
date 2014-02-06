@@ -10,9 +10,9 @@ private:
     std::vector<int> tree;
 
     // We need to add a little extra because we index from 0
-    int child_left(int idx) { return idx * 2 + 1; }
-    int child_right(int idx) { return idx * 2 + 2; }
-    int parent(int idx) { return (idx - 1) / 2; }
+    int child_left(int idx) const { return idx * 2 + 1; }
+    int child_right(int idx) const { return idx * 2 + 2; }
+    int parent(int idx) const { return (idx - 1) / 2; }
 
     void make_bfs_layout(const std::vector<int> &v, int s, int e, int idx) {
         if (s > e) return;
@@ -32,7 +32,7 @@ public:
         make_bfs_layout(elems, 0, elems.size()-1, 0);
     }
 
-    int pred(int x) {
+    int pred(int x) const {
         if (tree.empty()) return -1;
 
         int idx = 0; // Set index to root
