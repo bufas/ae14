@@ -10,6 +10,28 @@
 #include "../InorderBinarySearch.h"
 #include "../BFSBinarySearch.h"
 
+/**
+ * Add support for increasing the number of elements by a fixed
+ * amount, instead of just doubling it every time.
+ *
+ * Output the minimum and maximum amount of time taken for a 
+ * single query. This will allow us to add confidence bars to
+ * the graphs. One possiblity could also be to remove the k 
+ * fastest and slowest running times i.e. remove outliers.
+ *
+ * Use a better timer that can also measure cache misses and
+ * branch mispredictions.
+ */
+
+enum class MemoryLayout {LINEAR, INORDER, BFS, DFS, VEB};
+struct Params {
+    MemoryLayout memory_layout;
+    int min_log_tree_size;
+    int max_log_tree_size;
+    int no_of_queries;
+    int random_seed;
+};
+
 void print_data_line(int log_elems, int searches, struct timeval before, struct timeval after) {
     // Calculate time
     long utime = ((after.tv_sec - before.tv_sec) * 1000000) + after.tv_usec - before.tv_usec;
@@ -37,15 +59,6 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, const int l
 
     // TODO use dummy, or the loop will be optimized away
 }
-
-enum class MemoryLayout {LINEAR, INORDER, BFS, DFS, VEB};
-struct Params {
-    MemoryLayout memory_layout;
-    int min_log_tree_size;
-    int max_log_tree_size;
-    int no_of_queries;
-    int random_seed;
-};
 
 int intify_param(const char arg[], int default_val) {
     std::istringstream iss(arg);
