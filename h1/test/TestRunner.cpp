@@ -1,17 +1,23 @@
 #include <iostream>
-#include "LinearSearchTest.h"
-#include "InorderBinSearchTest.h"
-#include "BFSBinSearchTest.h"
+#include <vector>
+#include "../MemoryLayout.h"
+#include "../Params.h"
+#include "BasicTest.h"
 
 int main(int argc, char *argv[]) {
-    LinearSearchTest lst;
-    lst.run();
+    std::vector<MemoryLayout> mls {
+        MemoryLayout::LINEAR,
+        MemoryLayout::INORDER,
+        MemoryLayout::BFS
+    };
 
-    InorderBinSearchTest ibst;
-    ibst.run();
+    for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {
+        cout << "Testing " << as_string(*it) << "..." << endl << flush;
+        PredSearchTreeFactory factory(*it);
 
-    BFSBinSearchTest bfsbst;
-    bfsbst.run();
+        BasicTest basic(factory);
+        basic.run();
+    }
 
     cout << "All OK!" << endl;
     return 0;
