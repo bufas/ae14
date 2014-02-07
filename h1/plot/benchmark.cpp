@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include "../MemoryLayout.h"
+#include "../Params.h"
 #include "../LinearSearch.h"
 #include "../InorderBinarySearch.h"
 #include "../BFSBinarySearch.h"
@@ -22,15 +24,6 @@
  * Use a better timer that can also measure cache misses and
  * branch mispredictions.
  */
-
-enum class MemoryLayout {LINEAR, INORDER, BFS, DFS, VEB};
-struct Params {
-    MemoryLayout memory_layout;
-    int min_log_tree_size;
-    int max_log_tree_size;
-    int no_of_queries;
-    int random_seed;
-};
 
 void print_data_line(int log_elems, int searches, struct timeval before, struct timeval after) {
     // Calculate time
@@ -116,22 +109,9 @@ PredSearchTree* get_search_algorithm(const MemoryLayout &ml, const std::vector<i
     }
 }
 
-std::string memory_layout_as_string(const MemoryLayout &ml) {
-    switch (ml) {
-        case MemoryLayout::LINEAR: return "linear";
-        case MemoryLayout::INORDER: return "inorder";
-        case MemoryLayout::BFS: return "BFS";
-        case MemoryLayout::DFS: return "DFS";
-        case MemoryLayout::VEB: return "vEB";
-        default: 
-            std::cout << "Printing memory layouts is wrong" << std::endl;
-            exit(-1);
-    }
-}
-
 void print_output_header(const Params &p) {
     std::cout << "# Timing predecessor search with the following parameters" << std::endl;
-    std::cout << "# \tmemory layout       : " << memory_layout_as_string(p.memory_layout) << std::endl;
+    std::cout << "# \tmemory layout       : " << as_string(p.memory_layout) << std::endl;
     std::cout << "# \tmin tree size (log) : " << p.min_log_tree_size << std::endl;
     std::cout << "# \tmax tree size (log) : " << p.max_log_tree_size << std::endl;
     std::cout << "# \tnumber of queries   : " << p.no_of_queries << std::endl;
