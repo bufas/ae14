@@ -42,5 +42,13 @@ public:
         return (only_left) ? -1 : tree[prev];
     }
 
+    virtual void print() const {
+        std::cout << "[ ";
+        for (auto it = tree.begin(); it != tree.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << "]" << std::endl;
+    }
+
 
 };
