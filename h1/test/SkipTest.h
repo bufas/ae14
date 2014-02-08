@@ -14,7 +14,7 @@
  * An example skip test, "Skip 1 every 3 from 1 to 10":
  *
  *   v: 1 2 3 - 5 6 7 - 9
- *   p: 1 2 3 4 5 6 7 8 9
+ *   p: 1 2 3 3 5 6 7 7 9
  *
  * Here, we first add 3 numbers (1-3) and then skip 1 number (4) and then
  * go back to adding another 3 numbers (5-7), then skip 1 (8), and then
