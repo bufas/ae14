@@ -31,6 +31,10 @@ public:
         #define RUN_SKIP_TEST(x,y,a,b) \
         RUN(Skip_ ## x ## _Every_ ## y ## _From_ ## a ## _To_ ## b);
 
+        RUN_SKIP_TEST(0,0,1, 7)
+        RUN_SKIP_TEST(0,0,1,13)
+        RUN_SKIP_TEST(0,0,1,25)
+
         RUN_SKIP_TEST(0,0,1,   4);
         RUN_SKIP_TEST(0,0,1,   8);
         RUN_SKIP_TEST(0,0,1,  16);
@@ -153,6 +157,12 @@ private:
         verify_skip_test(v, p, x, y, a, b); \
     }
 
+    // Dangling node in right sub-tree
+    MAKE_SKIP_TEST(0,0,1, 7)
+    MAKE_SKIP_TEST(0,0,1,13)
+    MAKE_SKIP_TEST(0,0,1,25)
+
+    // Power of 2 minus 1, no dangling nodes
     MAKE_SKIP_TEST(0,0,1,   4)
     MAKE_SKIP_TEST(0,0,1,   8)
     MAKE_SKIP_TEST(0,0,1,  16)
@@ -163,6 +173,7 @@ private:
     MAKE_SKIP_TEST(0,0,1, 512)
     MAKE_SKIP_TEST(0,0,1,1024)
 
+    // Power of 2, one dangling node
     MAKE_SKIP_TEST(0,0,0,   4)
     MAKE_SKIP_TEST(0,0,0,   8)
     MAKE_SKIP_TEST(0,0,0,  16)
