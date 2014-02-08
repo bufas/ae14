@@ -30,10 +30,7 @@ protected:
     int parent(int idx) {
         if (idx == child_right(idx - (1 << height_of_subtree[idx]))) return idx - (1 << height_of_subtree[idx]);
         if (idx == child_right(idx - (1 << (height_of_subtree[idx] + 1)))) return idx - (1 << (height_of_subtree[idx] + 1));
-        if (idx == child_left(idx - 1)) return idx - 1;
-
-        std::cout << "FAILURE IN PARENT" << std::endl;
-        exit(-1);
+        return idx - 1;
     }
 
 public:
