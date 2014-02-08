@@ -36,6 +36,15 @@ void is_equal(int actual, int expected) {
     }
 }
 
+void is_equal(std::auto_ptr<PredSearchTree> &tree, int i, int expected) {
+    int actual = tree->pred(i);
+    if (actual != expected) {
+        std::cout << "ERROR in test: " << g_current_test << "  (i = " << i << ")" << std::endl;
+        std::cout << "  expected: " << expected << ", actual: " << actual << std::endl << std::flush;
+        exit(-1);
+    }
+}
+
 /**
  * The Test interface has but a single method for running the
  * tests it contains.

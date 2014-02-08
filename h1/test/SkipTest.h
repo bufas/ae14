@@ -14,7 +14,7 @@
  * An example skip test, "Skip 1 every 3 from 1 to 10":
  *
  *   v: 1 2 3 - 5 6 7 - 9
- *   p: 1 2 3 4 5 6 7 8 9
+ *   p: 1 2 3 3 5 6 7 7 9
  *
  * Here, we first add 3 numbers (1-3) and then skip 1 number (4) and then
  * go back to adding another 3 numbers (5-7), then skip 1 (8), and then
@@ -30,6 +30,20 @@ public:
     void run() {
         #define RUN_SKIP_TEST(x,y,a,b) \
         RUN(Skip_ ## x ## _Every_ ## y ## _From_ ## a ## _To_ ## b);
+
+        RUN_SKIP_TEST(0,0,1, 7)
+        RUN_SKIP_TEST(0,0,1,13)
+        RUN_SKIP_TEST(0,0,1,25)
+
+        RUN_SKIP_TEST(0,0,1,   4);
+        RUN_SKIP_TEST(0,0,1,   8);
+        RUN_SKIP_TEST(0,0,1,  16);
+        RUN_SKIP_TEST(0,0,1,  32);
+        RUN_SKIP_TEST(0,0,1,  64);
+        RUN_SKIP_TEST(0,0,1, 128);
+        RUN_SKIP_TEST(0,0,1, 256);
+        RUN_SKIP_TEST(0,0,1, 512);
+        RUN_SKIP_TEST(0,0,1,1024);
 
         RUN_SKIP_TEST(0,0,0,   4);
         RUN_SKIP_TEST(0,0,0,   8);
@@ -126,7 +140,7 @@ private:
 
         // int dummy = 0;
         for (int i = a; i < b; ++i, ++it) {
-            is_equal(tree->pred(i), *it);
+            is_equal(tree, i, *it);
             // dummy += tree->pred(i);
         }
         // std::cout << dummy << std::endl;
@@ -143,6 +157,23 @@ private:
         verify_skip_test(v, p, x, y, a, b); \
     }
 
+    // Dangling node in right sub-tree
+    MAKE_SKIP_TEST(0,0,1, 7)
+    MAKE_SKIP_TEST(0,0,1,13)
+    MAKE_SKIP_TEST(0,0,1,25)
+
+    // Power of 2 minus 1, no dangling nodes
+    MAKE_SKIP_TEST(0,0,1,   4)
+    MAKE_SKIP_TEST(0,0,1,   8)
+    MAKE_SKIP_TEST(0,0,1,  16)
+    MAKE_SKIP_TEST(0,0,1,  32)
+    MAKE_SKIP_TEST(0,0,1,  64)
+    MAKE_SKIP_TEST(0,0,1, 128)
+    MAKE_SKIP_TEST(0,0,1, 256)
+    MAKE_SKIP_TEST(0,0,1, 512)
+    MAKE_SKIP_TEST(0,0,1,1024)
+
+    // Power of 2, one dangling node
     MAKE_SKIP_TEST(0,0,0,   4)
     MAKE_SKIP_TEST(0,0,0,   8)
     MAKE_SKIP_TEST(0,0,0,  16)
