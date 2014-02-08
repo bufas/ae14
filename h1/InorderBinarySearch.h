@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include "PredSearchTree.h"
 
 class InorderBinarySearch : public PredSearchTree {
 

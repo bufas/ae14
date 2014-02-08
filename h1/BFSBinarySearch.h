@@ -2,54 +2,34 @@
 
 #include <vector>
 #include <algorithm>
+#include "BinaryPredSearchTree.h"
 
-class BFSBinarySearch : public PredSearchTree {
+class BFSBinarySearch : public BinaryPredSearchTree {
 
 private:
-    std::vector<int> elems; // TODO this is just used for startup
-    std::vector<int> tree;
-
-    // We need to add a little extra because we index from 0
-    int child_left(int idx) const { return idx * 2 + 1; }
-    int child_right(int idx) const { return idx * 2 + 2; }
-    int parent(int idx) const { return (idx - 1) / 2; }
-
-    void make_bfs_layout(const std::vector<int> &v, int s, int e, int idx) {
+    void build(const std::vector<int> &v, int s, int e, int idx) {
         if (s > e) return;
 
         int mid = (e + s + 1) / 2;
 
         tree[idx] = v[mid];
 
-        make_bfs_layout(v, s,     mid-1, child_left(idx));
-        make_bfs_layout(v, mid+1, e,     child_right(idx));
+        build(v, s,     mid-1, child_left(idx));
+        build(v, mid+1, e,     child_right(idx));
     }
+
+protected:
+    // We need to add a little extra because we index from 0
+    int child_left(int idx) const { return idx * 2 + 1; }
+    int child_right(int idx) const { return idx * 2 + 2; }
+    // int parent(int idx) const { return (idx - 1) / 2; }
+    int get_root_idx() const { return 0; }
 
 public:
-
-    BFSBinarySearch(const std::vector<int> &v) : elems(v), tree(v) {
-        std::sort(elems.begin(), elems.end());
-        make_bfs_layout(elems, 0, elems.size()-1, 0);
-    }
-
-    int pred(int x) const {
-        if (tree.empty()) return -1;
-
-        int idx = 0; // Set index to root
-        bool only_left = true;
-
-        while (idx < tree.size()) {
-            if (tree[idx] == x) return x;
-
-            if (tree[idx] < x) {
-                only_left = false;
-                idx = child_right(idx);
-            } else {
-                idx = child_left(idx);
-            }
-        }
-
-        return (only_left) ? -1 : tree[parent(idx)];
+    BFSBinarySearch(const std::vector<int> &v) : BinaryPredSearchTree(v) {
+        std::vector<int> temp(v);
+        std::sort(temp.begin(), temp.end());
+        build(temp, 0, temp.size()-1, 0);
     }
 
 };
