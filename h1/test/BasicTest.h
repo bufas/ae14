@@ -26,13 +26,13 @@ private:
     void Empty_Pred0_NoPred() {
         std::vector<int> v;
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(0) == -1);
+        is_equal(tree, 0, -1);
     }
 
     void Empty_Pred100_NoPred() {
         std::vector<int> v;
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(100) == -1);
+        is_equal(tree, 100, -1);
     }
 
     void Singleton_PredEqual_Success() {
@@ -40,7 +40,7 @@ private:
         std::vector<int> v;
         v.push_back(value);
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(value) == value);
+        is_equal(tree, value, value);
     }
 
     void Singleton_PredGreater_Success() {
@@ -48,7 +48,7 @@ private:
         std::vector<int> v;
         v.push_back(value);
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(value + 5) == value);
+        is_equal(tree, value + 5, value);
     }
 
     void Singleton_PredLower_NoPred() {
@@ -56,7 +56,7 @@ private:
         std::vector<int> v;
         v.push_back(value);
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(value - 5) == -1);
+        is_equal(tree, value - 5, -1);
     }
 
     void MultiUnsorted_Preds_Success() {
@@ -67,10 +67,10 @@ private:
         v.push_back(5);
 
         std::auto_ptr<PredSearchTree> tree(factory.createTree(v));
-        assert(tree->pred(10) == 7);
-        assert(tree->pred(198) == 198);
-        assert(tree->pred(501) == 198);
-        assert(tree->pred(4) == -1);
-        assert(tree->pred(5) == 5);
+        is_equal(tree, 10, 7);
+        is_equal(tree, 198, 198);
+        is_equal(tree, 501, 198);
+        is_equal(tree, 4, -1);
+        is_equal(tree, 5, 5);
     }
 };
