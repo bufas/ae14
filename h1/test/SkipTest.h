@@ -31,6 +31,16 @@ public:
         #define RUN_SKIP_TEST(x,y,a,b) \
         RUN(Skip_ ## x ## _Every_ ## y ## _From_ ## a ## _To_ ## b);
 
+        RUN_SKIP_TEST(0,0,1,   4);
+        RUN_SKIP_TEST(0,0,1,   8);
+        RUN_SKIP_TEST(0,0,1,  16);
+        RUN_SKIP_TEST(0,0,1,  32);
+        RUN_SKIP_TEST(0,0,1,  64);
+        RUN_SKIP_TEST(0,0,1, 128);
+        RUN_SKIP_TEST(0,0,1, 256);
+        RUN_SKIP_TEST(0,0,1, 512);
+        RUN_SKIP_TEST(0,0,1,1024);
+
         RUN_SKIP_TEST(0,0,0,   4);
         RUN_SKIP_TEST(0,0,0,   8);
         RUN_SKIP_TEST(0,0,0,  16);
@@ -142,6 +152,16 @@ private:
         create_skip_test(v, p, x, y, a, b); \
         verify_skip_test(v, p, x, y, a, b); \
     }
+
+    MAKE_SKIP_TEST(0,0,1,   4)
+    MAKE_SKIP_TEST(0,0,1,   8)
+    MAKE_SKIP_TEST(0,0,1,  16)
+    MAKE_SKIP_TEST(0,0,1,  32)
+    MAKE_SKIP_TEST(0,0,1,  64)
+    MAKE_SKIP_TEST(0,0,1, 128)
+    MAKE_SKIP_TEST(0,0,1, 256)
+    MAKE_SKIP_TEST(0,0,1, 512)
+    MAKE_SKIP_TEST(0,0,1,1024)
 
     MAKE_SKIP_TEST(0,0,0,   4)
     MAKE_SKIP_TEST(0,0,0,   8)
