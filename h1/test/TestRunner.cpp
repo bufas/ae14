@@ -8,8 +8,8 @@
 int main(int argc, char *argv[]) {
     std::vector<MemoryLayout> mls {
         MemoryLayout::LINEAR,
-        MemoryLayout::INORDER//,
-        // MemoryLayout::BFS
+        MemoryLayout::INORDER,
+        MemoryLayout::BFS
     };
 
     for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {

@@ -13,7 +13,6 @@ public:
 
     void run() {
         RUN(Empty_Pred0_NoPred);
-        RUN(Empty_Pred0_NoPred);
         RUN(Empty_Pred100_NoPred);
         RUN(Singleton_PredEqual_Success);
         RUN(Singleton_PredGreater_Success);
