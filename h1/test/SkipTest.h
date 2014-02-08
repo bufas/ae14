@@ -136,7 +136,7 @@ private:
 
         // int dummy = 0;
         for (int i = a; i < b; ++i, ++it) {
-            is_equal(tree->pred(i), *it);
+            is_equal(tree, i, *it);
             // dummy += tree->pred(i);
         }
         // std::cout << dummy << std::endl;
