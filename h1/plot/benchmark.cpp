@@ -5,12 +5,14 @@
 #include <algorithm>
 #include <cstdio>
 #include <sstream>
+#include <fstream>
 
 #include "../MemoryLayout.h"
 #include "../Params.h"
 #include "../LinearSearch.h"
 #include "../InorderBinarySearch.h"
 #include "../BFSBinarySearch.h"
+#include "../DFSBinarySearch.h"
 
 /**
  * Add support for increasing the number of elements by a fixed
@@ -51,6 +53,10 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, const int l
     print_data_line(log_tree_size, queries.size(), before, after); // Print time elapsed
 
     // TODO use dummy, or the loop will be optimized away
+    std::ofstream devnull;
+    devnull.open("/dev/null");
+    devnull << dummy;
+    devnull.close();
 }
 
 int intify_param(const char arg[], int default_val) {
@@ -102,6 +108,7 @@ PredSearchTree* get_search_algorithm(const MemoryLayout &ml, const std::vector<i
         case MemoryLayout::LINEAR:  return new LinearSearch(values); 
         case MemoryLayout::INORDER: return new InorderBinarySearch(values); 
         case MemoryLayout::BFS:     return new BFSBinarySearch(values); 
+        case MemoryLayout::DFS:     return new DFSBinarySearch(values); 
         // TODO implement DFS and vEB
         default:
             std::cout << "THIS IS VERY WRONG!" << std::endl;
