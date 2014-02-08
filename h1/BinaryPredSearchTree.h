@@ -13,7 +13,7 @@ protected:
     virtual int get_root_idx() const = 0;
 
 public:
-    BinaryPredSearchTree(const std::vector<int> &v) : tree(v.size()) {}
+    BinaryPredSearchTree(const std::vector<int> &v) : tree(v.size(), -1) {}
 
     virtual ~BinaryPredSearchTree() {}
 
@@ -23,15 +23,15 @@ public:
     virtual int pred(int x) const {
         if (tree.empty()) return -1;
 
-        int prev = -1;
+        int pred = 0;
         int idx = get_root_idx(); // Set index to the root
         bool only_left = true;
 
         while (idx < tree.size()) {
             if (tree[idx] == x) return x;
             
-            prev = idx;
             if (tree[idx] < x) {
+                pred = idx;
                 only_left = false;
                 idx = child_right(idx);
             } else {
@@ -39,7 +39,7 @@ public:
             }
         }
 
-        return (only_left) ? -1 : tree[prev];
+        return (only_left) ? -1 : tree[pred];
     }
 
     virtual void print() const {
