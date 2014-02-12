@@ -15,9 +15,6 @@
 #include "../DFSBinarySearch.h"
 
 /**
- * Add support for increasing the number of elements by a fixed
- * amount, instead of just doubling it every time.
- *
  * Output the minimum and maximum amount of time taken for a 
  * single query. This will allow us to add confidence bars to
  * the graphs. One possiblity could also be to remove the k 
@@ -27,19 +24,19 @@
  * branch mispredictions.
  */
 
-void print_data_line(int log_elems, int searches, struct timeval before, struct timeval after) {
+void print_data_line(int elems, int searches, struct timeval before, struct timeval after) {
     // Calculate time
     long utime = ((after.tv_sec - before.tv_sec) * 1000000) + after.tv_usec - before.tv_usec;
     long stime = ((after.tv_sec - before.tv_sec) * 1000000) + after.tv_usec - before.tv_usec;
 
     // Print the output
-    printf("%d\t%d\t%d\t%ld\n", log_elems, 1 << log_elems, searches, (utime + stime));
+    printf("%d\t%d\t%ld\n", elems, searches, (utime + stime));
 }
 
 /**
  * Does the actual timing of the searches
  */
-void bench(const PredSearchTree *t, const std::vector<int> &queries, const int log_tree_size) {
+void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements) {
     struct timeval before, after;
     gettimeofday(&before, nullptr); // start timer
 
@@ -50,7 +47,7 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, const int l
     }
 
     gettimeofday(&after, nullptr); // stop timer
-    print_data_line(log_tree_size, queries.size(), before, after); // Print time elapsed
+    print_data_line(elements, queries.size(), before, after); // Print time elapsed
 
     // TODO use dummy, or the loop will be optimized away
     std::ofstream devnull;
@@ -75,6 +72,7 @@ Params parse_arguments(int argc, char *argv[]) {
         std::cout << "\tminimum tree size (logarithmic)" << std::endl;
         std::cout << "\tmaximum tree size (logarithmic)" << std::endl;
         std::cout << "\tnumber of queries for each tree size" << std::endl;
+        std::cout << "\thow much to increment tree size each step (optional)" << std::endl;
         std::cout << "\trandom seed (optional)" << std::endl;
         std::cout << std::endl;
         std::cout << "\tExample usage: " << argv[0] << " bfs 5 20 1000" << std::endl;
@@ -98,7 +96,8 @@ Params parse_arguments(int argc, char *argv[]) {
     p.min_log_tree_size = intify_param(argv[2], 10);
     p.max_log_tree_size = intify_param(argv[3], 20);
     p.no_of_queries     = intify_param(argv[4], 1000);
-    p.random_seed       = (argc >= 6) ? intify_param(argv[5], 0) : time(nullptr);
+    p.size_increment    = (argc >= 6) ? intify_param(argv[5], 0) : 0;
+    p.random_seed       = (argc >= 7) ? intify_param(argv[5], 0) : time(nullptr);
 
     return p;
 }
@@ -122,6 +121,7 @@ void print_output_header(const Params &p) {
     std::cout << "# \tmin tree size (log) : " << p.min_log_tree_size << std::endl;
     std::cout << "# \tmax tree size (log) : " << p.max_log_tree_size << std::endl;
     std::cout << "# \tnumber of queries   : " << p.no_of_queries << std::endl;
+    std::cout << "# \tsize increment      : " << ((p.size_increment == 0) ? "*2" : std::to_string(p.size_increment)) << std::endl;
     std::cout << "# \trandom seed         : " << p.random_seed << std::endl;
     std::cout << "#" << std::endl;
     std::cout << "# Datalines: log(tree size), tree size, #searches, time in us" << std::endl;
@@ -148,9 +148,8 @@ int main(int argc, char *argv[]) {
 
     print_output_header(p);
     std::vector<int> values; // The tree is built from this vector
-    for (int log_tree_size = p.min_log_tree_size; log_tree_size <= p.max_log_tree_size; log_tree_size++) {
-        const int tree_size = 1 << log_tree_size;
-
+    int tree_size = 1 << p.min_log_tree_size;
+    while (tree_size <= 1 << p.max_log_tree_size) {
         // Generate random numbers to search for (reuse old numbers)
         const int additional_elements = tree_size - values.size();
         for (int q = 0; q < additional_elements; q++) values.push_back(rand());
@@ -159,6 +158,10 @@ int main(int argc, char *argv[]) {
         std::auto_ptr<PredSearchTree> t(get_search_algorithm(p.memory_layout, values));
 
         // Benchmark the predecessor searches
-        bench(t.get(), queries, log_tree_size);
+        bench(t.get(), queries, tree_size);
+
+        // Increment tree size
+        if (p.size_increment == 0) tree_size *= 2;
+        else tree_size += p.size_increment;
     }
 }
