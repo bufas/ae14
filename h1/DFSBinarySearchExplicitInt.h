@@ -2,34 +2,31 @@
 
 #include <vector>
 #include <algorithm>
-#include <fstream>
-#include "BinaryExplicitPredSearchTree.h"
+#include "BinaryExplicitIntPredSearchTree.h"
 
-//struct Node;
-
-class DFSBinarySearchExplicit : public BinaryExplicitPredSearchTree {
+class DFSBinarySearchExplicitInt : public BinaryExplicitIntPredSearchTree {
 
 private:
-    Node* build(const std::vector<int> &v, int idx, int s, int e, int skew) {
-        if (s > e) return nullptr;
+    int build(const std::vector<int> &v, int idx, int s, int e, int skew) {
+        if (s > e) return -1;
 
         const int split = (int) (s + ((skew/100.0f) * (e - s)));
         const int left_child_idx  = idx + 1;
         const int right_child_idx = idx + (split - s) + 1;
 
-        Node *n = &tree[idx];
+        IntNode *n = &tree[idx];
         n->value        = v[split];
         n->child_left   = build(v, left_child_idx , s        , split - 1, skew);
         n->child_right  = build(v, right_child_idx, split + 1, e        , skew);
 
-        return n;
+        return idx;
     }
 
 protected:
     int get_root_idx() const { return 0; }
     
 public:
-    DFSBinarySearchExplicit(const std::vector<int> &v, int skew = 80) : BinaryExplicitPredSearchTree(v) {
+    DFSBinarySearchExplicitInt(const std::vector<int> &v, int skew = 80) : BinaryExplicitIntPredSearchTree(v) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
         build(temp, 0, 0, temp.size() - 1, skew);

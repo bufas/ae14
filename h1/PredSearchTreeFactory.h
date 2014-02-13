@@ -8,6 +8,7 @@
 #include "BFSBinarySearch.h"
 #include "DFSBinarySearch.h"
 #include "DFSBinarySearchExplicit.h"
+#include "DFSBinarySearchExplicitInt.h"
 
 class PredSearchTreeFactory {
 public:
@@ -21,6 +22,7 @@ public:
             case MemoryLayout::DFS:     return new DFSBinarySearch(values); 
             // TODO implement vEB
             case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values); 
+            case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values); 
             default:
                 std::cout << "THIS IS VERY WRONG!" << std::endl;
                 exit(-1);

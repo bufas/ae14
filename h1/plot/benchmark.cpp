@@ -88,6 +88,8 @@ Params parse_arguments(int argc, char *argv[]) {
     else if (layout == "bfs") p.memory_layout = MemoryLayout::BFS;
     else if (layout == "dfs") p.memory_layout = MemoryLayout::DFS;
     else if (layout == "veb") p.memory_layout = MemoryLayout::VEB;
+    else if (layout == "dfs_explicit") p.memory_layout = MemoryLayout::DFS_EXPLICIT;
+    else if (layout == "dfs_explicit_int") p.memory_layout = MemoryLayout::DFS_EXPLICIT_INT;
     else {
         std::cout << "Parameter parsing: The memory layout given is not valid." << std::endl;
         exit(-1);
@@ -121,6 +123,7 @@ void print_output_header(const Params &p) {
  *   - Smallest tree size (logarithmic)
  *   - Largest tree size (logarithmic)
  *   - Number of queries (pr. tree size)
+ *   - How much to increment size each step (optional)
  *   - Random seed (optional)
  */
 int main(int argc, char *argv[]) {

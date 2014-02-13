@@ -11,7 +11,8 @@ int main(int argc, char *argv[]) {
         MemoryLayout::INORDER,
         MemoryLayout::BFS,
         MemoryLayout::DFS,
-        MemoryLayout::DFS_EXPLICIT
+        MemoryLayout::DFS_EXPLICIT,
+        MemoryLayout::DFS_EXPLICIT_INT
     };
 
     for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {
