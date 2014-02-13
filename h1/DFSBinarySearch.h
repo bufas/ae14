@@ -21,7 +21,6 @@ private:
         build(v, child_right(idx), mid + 1, e      , h - 1);
     }
 
-
 protected:
     int child_left(int idx) const { return idx + 1; }
     int child_right(int idx) const { return idx + (1 << (height_of_subtree[idx] - 1)); }
