@@ -4,7 +4,7 @@
 #include <vector>
 #include "../PredSearchTree.h"
 #include "Test.h"
-#include "PredSearchTreeFactory.h"
+#include "../PredSearchTreeFactory.h"
 
 class BasicTest : public Test {
 

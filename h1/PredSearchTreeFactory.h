@@ -1,12 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include "../PredSearchTree.h"
-#include "../LinearSearch.h"
-#include "../InorderBinarySearch.h"
-#include "../BFSBinarySearch.h"
-#include "../DFSBinarySearch.h"
-#include "../DFSBinarySearchExplicit.h"
+#include "PredSearchTree.h"
+#include "LinearSearch.h"
+#include "InorderBinarySearch.h"
+#include "BFSBinarySearch.h"
+#include "DFSBinarySearch.h"
+#include "DFSBinarySearchExplicit.h"
 
 class PredSearchTreeFactory {
 public:

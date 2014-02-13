@@ -4,7 +4,7 @@
 #include <vector>
 #include "../PredSearchTree.h"
 #include "Test.h"
-#include "PredSearchTreeFactory.h"
+#include "../PredSearchTreeFactory.h"
 
 /**
  * A skip test is a test in which a tree is built over some of the numbers
