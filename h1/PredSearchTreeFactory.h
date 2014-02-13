@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "MemoryLayout.h"
 #include "PredSearchTree.h"
 #include "LinearSearch.h"
 #include "InorderBinarySearch.h"

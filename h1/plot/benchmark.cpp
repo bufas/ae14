@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 
+#include "../PredSearchTreeFactory.h"
 #include "../MemoryLayout.h"
 #include "../Params.h"
 #include "../LinearSearch.h"
@@ -102,19 +103,6 @@ Params parse_arguments(int argc, char *argv[]) {
     return p;
 }
 
-PredSearchTree* get_search_algorithm(const MemoryLayout &ml, const std::vector<int> &values) {
-    switch (ml) {
-        case MemoryLayout::LINEAR:  return new LinearSearch(values); 
-        case MemoryLayout::INORDER: return new InorderBinarySearch(values); 
-        case MemoryLayout::BFS:     return new BFSBinarySearch(values); 
-        case MemoryLayout::DFS:     return new DFSBinarySearch(values); 
-        // TODO implement DFS and vEB
-        default:
-            std::cout << "THIS IS VERY WRONG!" << std::endl;
-            exit(-1);
-    }
-}
-
 void print_output_header(const Params &p) {
     std::cout << "# Timing predecessor search with the following parameters" << std::endl;
     std::cout << "# \tmemory layout       : " << as_string(p.memory_layout) << std::endl;
@@ -149,13 +137,14 @@ int main(int argc, char *argv[]) {
     print_output_header(p);
     std::vector<int> values; // The tree is built from this vector
     int tree_size = 1 << p.min_log_tree_size;
+    PredSearchTreeFactory tree_factory(p.memory_layout);
     while (tree_size <= 1 << p.max_log_tree_size) {
         // Generate random numbers to search for (reuse old numbers)
         const int additional_elements = tree_size - values.size();
         for (int q = 0; q < additional_elements; q++) values.push_back(rand());
 
         // Build the tree from the values vector
-        std::auto_ptr<PredSearchTree> t(get_search_algorithm(p.memory_layout, values));
+        std::auto_ptr<PredSearchTree> t(tree_factory.createTree(values));
 
         // Benchmark the predecessor searches
         bench(t.get(), queries, tree_size);
