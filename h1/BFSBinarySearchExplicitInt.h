@@ -16,10 +16,8 @@ private:
         if (v.size() == 0) return;
 
         // Initialize variables
-        // int siblings = 0;
         std::vector<pair<int,int>*> start_end(v.size());
         start_end[0] = new pair<int,int>(0, v.size() - 1);
-        // int current_idx = 0;
         int next_free_child_idx = 1;
 
         // Loop over all values and insert them in tree
