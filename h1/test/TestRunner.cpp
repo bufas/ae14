@@ -11,8 +11,14 @@ int main(int argc, char *argv[]) {
         MemoryLayout::INORDER,
         MemoryLayout::BFS,
         MemoryLayout::DFS,
+        // MemoryLayout::INORDER_EXPLICIT,
+        // MemoryLayout::INORDER_EXPLICIT_INT,
+        // MemoryLayout::BFS_EXPLICIT,
+        MemoryLayout::BFS_EXPLICIT_INT,
         MemoryLayout::DFS_EXPLICIT,
-        MemoryLayout::DFS_EXPLICIT_INT
+        MemoryLayout::DFS_EXPLICIT_INT,
+        // MemoryLayout::VEB_EXPLICIT,
+        // MemoryLayout::VEB_EXPLICIT_INT
     };
 
     for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {

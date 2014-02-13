@@ -88,8 +88,14 @@ Params parse_arguments(int argc, char *argv[]) {
     else if (layout == "bfs") p.memory_layout = MemoryLayout::BFS;
     else if (layout == "dfs") p.memory_layout = MemoryLayout::DFS;
     else if (layout == "veb") p.memory_layout = MemoryLayout::VEB;
+    // else if (layout == "inorder_explicit") p.memory_layout = MemoryLayout::INORDER_EXPLICIT;
+    // else if (layout == "inorder_explicit_int") p.memory_layout = MemoryLayout::INORDER_EXPLICIT_INT;
+    // else if (layout == "bfs_explicit") p.memory_layout = MemoryLayout::BFS_EXPLICIT;
+    else if (layout == "bfs_explicit_int") p.memory_layout = MemoryLayout::BFS_EXPLICIT_INT;
     else if (layout == "dfs_explicit") p.memory_layout = MemoryLayout::DFS_EXPLICIT;
     else if (layout == "dfs_explicit_int") p.memory_layout = MemoryLayout::DFS_EXPLICIT_INT;
+    // else if (layout == "veb_explicit") p.memory_layout = MemoryLayout::VEB_EXPLICIT;
+    // else if (layout == "veb_explicit_int") p.memory_layout = MemoryLayout::VEB_EXPLICIT_INT;
     else {
         std::cout << "Parameter parsing: The memory layout given is not valid." << std::endl;
         exit(-1);
