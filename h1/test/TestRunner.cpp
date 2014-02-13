@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
         MemoryLayout::LINEAR,
         MemoryLayout::INORDER,
         MemoryLayout::BFS,
-        MemoryLayout::DFS
+        MemoryLayout::DFS,
+        MemoryLayout::DFS_EXPLICIT
     };
 
     for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {
