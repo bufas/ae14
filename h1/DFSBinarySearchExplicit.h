@@ -5,8 +5,6 @@
 #include <fstream>
 #include "BinaryExplicitPredSearchTree.h"
 
-//struct Node;
-
 class DFSBinarySearchExplicit : public BinaryExplicitPredSearchTree {
 
 private:

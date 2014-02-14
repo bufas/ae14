@@ -58,7 +58,6 @@ public:
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
         build(temp, 0, 0, temp.size() - 1, skew);
-        make_dot("BFSExInt.dot");
     }
 
 };
