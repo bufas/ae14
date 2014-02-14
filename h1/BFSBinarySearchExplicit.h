@@ -3,10 +3,9 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
-#include <cmath>
-#include "BinaryExplicitIntPredSearchTree.h"
+#include "BinaryExplicitPredSearchTree.h"
 
-class BFSBinarySearchExplicitInt : public BinaryExplicitIntPredSearchTree {
+class BFSBinarySearchExplicit : public BinaryExplicitPredSearchTree {
 
 private:
     void build(const std::vector<int> &v, int idx, int s, int e, int skew) {
@@ -27,25 +26,25 @@ private:
             const int this_e = start_end[i]->second;
             const int split = (int) (this_s + ((skew/100.0f) * (this_e - this_s)));
 
-            IntNode *n = &tree[i];
+            Node *n = &tree[i];
             n->value = v[split];
 
             // Prep the left child
             if (this_s < split) {
-                n->child_left = next_free_child_idx;
+                n->child_left = &tree[next_free_child_idx];
                 start_end[next_free_child_idx] = new pair<int,int>(this_s, split - 1);
                 next_free_child_idx++;
             } else {
-                n->child_left = -1;
+                n->child_left = nullptr;
             }
 
             // Prep the right child
             if (this_e > split) {
-                n->child_right = next_free_child_idx;
+                n->child_right = &tree[next_free_child_idx];
                 start_end[next_free_child_idx] = new pair<int,int>(split + 1, this_e);
                 next_free_child_idx++;
             } else {
-                n->child_right = -1;
+                n->child_right = nullptr;
             }
         }
     }
@@ -54,11 +53,10 @@ protected:
     int get_root_idx() const { return 0; }
 
 public:
-    BFSBinarySearchExplicitInt(const std::vector<int> &v, int skew = 50) : BinaryExplicitIntPredSearchTree(v) {
+    BFSBinarySearchExplicit(const std::vector<int> &v, int skew = 50) : BinaryExplicitPredSearchTree(v) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
         build(temp, 0, 0, temp.size() - 1, skew);
-        make_dot("BFSExInt.dot");
     }
 
 };
