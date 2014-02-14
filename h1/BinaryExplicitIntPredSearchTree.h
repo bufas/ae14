@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include "PredSearchTree.h"
 
 struct IntNode {
@@ -43,21 +44,31 @@ public:
         return pred_val;
     }
 
-    // // I think this function is incorrect
-    // virtual void make_dot(std::string filename) {
-    //     std::ofstream outfile;
-    //     outfile.open(filename);
+    // I think this function is incorrect
+    virtual void make_dot(std::string filename) {
+        std::ofstream outfile;
+        outfile.open(filename);
 
-    //     outfile << "digraph DFS_EXPLICIT {\n";
+        outfile << "digraph DFS_EXPLICIT {\n";
 
-    //     for (auto it = tree.begin(); it != tree.end(); ++it) {
-    //         Node n = (*it);
-    //         outfile << "\t" << n.value << " -> " << n.child_left << "\n";
-    //         outfile << "\t" << n.value << " -> " << n.child_right << "\n";
-    //     }
+        //make_dot_aux(outfile, get_root_idx());
 
-    //     outfile << "}";
-    //     outfile.close();
-    // }
+        for (int i = 0; i < tree.size(); i++) {
+            IntNode n = tree[i];
+
+            if (n.child_left != -1) {
+                IntNode cl = tree[n.child_left];
+                outfile << "\t\"" << n.value << ":" << i << "\" -> \"" << cl.value << ":" << n.child_left << "\"\n";
+            }
+            
+            if (n.child_right != -1) {
+                IntNode cr = tree[n.child_right];
+                outfile << "\t\"" << n.value << ":" << i << "\" -> \"" << cr.value << ":" << n.child_right << "\"\n";
+            }
+        }
+
+        outfile << "}";
+        outfile.close();
+    }
 
 };
