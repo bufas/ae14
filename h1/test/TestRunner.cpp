@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
         MemoryLayout::DFS,
         // MemoryLayout::INORDER_EXPLICIT,
         // MemoryLayout::INORDER_EXPLICIT_INT,
-        // MemoryLayout::BFS_EXPLICIT,
+        MemoryLayout::BFS_EXPLICIT,
         MemoryLayout::BFS_EXPLICIT_INT,
         MemoryLayout::DFS_EXPLICIT,
         MemoryLayout::DFS_EXPLICIT_INT,

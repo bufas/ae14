@@ -11,7 +11,7 @@
 // #include "InorderBinarySearchExplicitInt.h"
 
 #include "BFSBinarySearch.h"
-// #include "BFSBinarySearchExplicit.h"
+#include "BFSBinarySearchExplicit.h"
 #include "BFSBinarySearchExplicitInt.h"
 
 #include "DFSBinarySearch.h"
@@ -36,7 +36,7 @@ public:
 
             // case MemoryLayout::INORDER_EXPLICIT: return new InorderBinarySearchExplicit(values); 
             // case MemoryLayout::INORDER_EXPLICIT_INT: return new InorderBinarySearchExplicitInt(values); 
-            // case MemoryLayout::BFS_EXPLICIT: return new BFSBinarySearchExplicit(values); 
+            case MemoryLayout::BFS_EXPLICIT: return new BFSBinarySearchExplicit(values); 
             case MemoryLayout::BFS_EXPLICIT_INT: return new BFSBinarySearchExplicitInt(values); 
             case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values); 
             case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values); 
