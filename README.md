@@ -1,21 +1,28 @@
 # MASTER PLAN
 
-### Implement a correctness checker which runs through the input linearly.
+~~Implement a correctness checker which runs through the input linearly.~~
 
-### Implement different implicit binary search layouts
-- Inorder
-- BFS
-- DFS
+Implement different implicit binary search layouts
+- ~~Inorder~~
+- ~~BFS~~
+- ~~DFS~~
 
-### Try to build the tree in different ways
-- Balanced
-- Skewed with varying skew factors
+Implement different explicit binary search layouts
+- ~~Inorder~~
+- ~~BFS~~
+- ~~DFS~~
+- vEB
+
+Try to build the tree in different ways
+- ~~Balanced~~
+- ~~Skewed with varying skew factors~~
 
 ### Tests
-- Different tree sizes
+- ~~Different tree sizes~~
 - Random queries that exist in the input
 - Random queries that do not exist in the input (recursion bottoms out)
 - Queries that give many branch mispredictions (recurse right and left alternating)
+- Varying skew factors
 
 ### Measurements
 - Cachefaults
@@ -32,11 +39,6 @@
 - Extend benchmark to measure branch mispredictions
 
 - Implement vEB layout
-
-- Research mmap usage
-- Implement explicit inorder layout
-- Implement explicit BFS layout
-- Implement explicit DFS layout
 - Implement explicit vEB layout
 
 - Write the tests and measurements
