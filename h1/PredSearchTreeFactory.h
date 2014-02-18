@@ -20,7 +20,7 @@
 
 // #include "VEBBinarySearch.h"
 // #include "VEBBinarySearchExplicit.h"
-// #include "VEBBinarySearchExplicitInt.h"
+#include "VEBBinarySearchExplicitInt.h"
 
 class PredSearchTreeFactory {
 public:
@@ -41,7 +41,7 @@ public:
             case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values); 
             case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values); 
             // case MemoryLayout::VEB_EXPLICIT: return new VEBBinarySearchExplicit(values); 
-            // case MemoryLayout::VEB_EXPLICIT_INT: return new VEBinarySearchExplicitInt(values); 
+            case MemoryLayout::VEB_EXPLICIT_INT: return new VEBBinarySearchExplicitInt(values); 
 
             default:
                 std::cout << "THIS IS VERY WRONG!" << std::endl;
