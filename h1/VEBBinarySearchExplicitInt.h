@@ -21,9 +21,7 @@ private:
 
         // If tree size is 0, return
         if (tree_size == 0) {
-            vector<IntNode*> res_car;
-            vector<int> res_cdr;
-            return std::make_pair(res_car, res_cdr);        // Return a pair of two empty vectors
+            return std::pair<vector<IntNode*>, vector<int>>();              // Return a pair of two empty vectors
         }
 
         // If tree size is 1, basecase, make node and return
@@ -38,9 +36,7 @@ private:
             n->child_left  = -1;
 
             // Create the return value
-            vector<IntNode*> res_car(1, n);
-            vector<int> res_cdr(1, mid);
-            return std::make_pair(res_car, res_cdr);        // Return a pair of vectors with size 1
+            return std::make_pair(vector<IntNode*>(1, n), vector<int>(1, mid)); // Return a pair of vectors with size 1
         }
 
         //*******************************************
@@ -64,8 +60,9 @@ private:
 
         // Calculate how big the bottom trees are going to be
         int bottom_tree_count = power_of_two(h0);           // Maximal number of bottom trees
-        int bottom_min_size   = (tree_size - top_size) / bottom_tree_count; // The size of all subtrees
-        int bottom_remainder  = (tree_size - top_size) % bottom_tree_count; // We need to make the first bottom_remainder contain bottom_min_size + 1 elements
+        int bottom_max_size   = (tree_size - top_size) / bottom_tree_count; // The size of all subtrees
+        int bottom_remainder  = (tree_size - top_size) % bottom_tree_count; // We need to make the first bottom_remainder contain bottom_max_size + 1 elements
+        if (bottom_remainder > 0) bottom_max_size++;
 
         // Build bottom trees
         int bottom_s          = s;                          // Start of subarray from which to choose values to for the first bottom
@@ -74,18 +71,11 @@ private:
         vector<IntNode*> bottom_leaves;                     // Will contain all leaves of this subtree
         for (int i = 0; i < bottom_tree_count; i++) {
             int bottom_e    = (i == bottom_tree_count-1) ? e : top_used[i] - 1; // Choose e in the last iteration as top_used[i] is out-of-bounds
-            int bottom_size = bottom_min_size;
-            if (i < bottom_remainder) bottom_size++;        // Add one because the tree is not complete
+            int bottom_size = bottom_max_size;
 
             // Assert that the bottom size can be filled by bottom_s to bottom_e elements
             // Tricky part
-            //   
-            if (bottom_size > bottom_e - bottom_s + 1) {
-                bottom_remainder++;
-                bottom_size--;
-                // cout<<"Bottom-tree cannot be filled ("<<bottom_size<<","<<bottom_s<<","<<bottom_e<<")"<<endl;
-                // exit(-1);
-            }
+            if (bottom_size > bottom_e - bottom_s + 1) bottom_size--;
 
             // Build the bottom tree
             // cout<<"BOTTOM ("<<bottom_size<<","<<bottom_idx<<","<<bottom_s<<","<<bottom_e<<")"<<endl;
