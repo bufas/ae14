@@ -11,4 +11,5 @@ plot    "inorder.bench.data"          using (log($1)/log(2)):($3/$2) title 'Inor
         "dfs_explicit.bench.data"     using (log($1)/log(2)):($3/$2) title 'DFS Explicit'     with lines, \
         "dfs_explicit_int.bench.data" using (log($1)/log(2)):($3/$2) title 'DFS Explicit int' with lines, \
         "bfs_explicit.bench.data"     using (log($1)/log(2)):($3/$2) title 'BFS Explicit'     with lines, \
-        "bfs_explicit_int.bench.data" using (log($1)/log(2)):($3/$2) title 'BFS Explicit int' with lines
+        "bfs_explicit_int.bench.data" using (log($1)/log(2)):($3/$2) title 'BFS Explicit int' with lines, \
+        "veb_explicit_int.bench.data" using (log($1)/log(2)):($3/$2) title 'vEB Explicit int' with lines
