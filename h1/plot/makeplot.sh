@@ -3,21 +3,34 @@
 rm *.png
 rm *.data
 
-clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark benchmark.cpp
+if [ "$1" == 'skew' ]; then
 
-# ./benchmark linear > linear.bench.data
-# ./benchmark inorder 4 21 1000000 20000 > inorder.bench.data
-# ./benchmark bfs 4 21 1000000 20000 > bfs.bench.data
-# ./benchmark dfs 4 21 1000000 20000 > dfs.bench.data
+    clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark_skew benchmark_skew.cpp
 
-# ./benchmark bfs 4 21 1000000 > bfs.bench.data
-# ./benchmark dfs 4 21 1000000 > dfs.bench.data
-# ./benchmark dfs_explicit 4 21 1000000 > dfs_explicit.bench.data
-./benchmark dfs_explicit_int 4 21 1000000 > dfs_explicit_int.bench.data
-# ./benchmark bfs_explicit 4 21 1000000 > bfs_explicit.bench.data
-./benchmark bfs_explicit_int 4 21 1000000 > bfs_explicit_int.bench.data
-./benchmark veb_explicit_int 4 21 1000000 > veb_explicit_int.bench.data
+    ./benchmark_skew 5 95 1000000 1000000 > dfs_explicit_int.skew.bench.data
 
-rm benchmark
+    rm benchmark_skew
+
+else
+
+    clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark benchmark.cpp
+
+    # ./benchmark linear > linear.bench.data
+    # ./benchmark inorder 4 21 1000000 20000 > inorder.bench.data
+    # ./benchmark bfs 4 21 1000000 20000 > bfs.bench.data
+    # ./benchmark dfs 4 21 1000000 20000 > dfs.bench.data
+
+    # ./benchmark inorder 10 28 1000000 > inorder.bench.data
+    ./benchmark bfs 10 28 1000000 > bfs.bench.data
+    # ./benchmark dfs 4 21 1000000 > dfs.bench.data
+    # ./benchmark dfs_explicit 4 21 1000000 > dfs_explicit.bench.data
+    # ./benchmark dfs_explicit_int 4 21 1000000 > dfs_explicit_int.bench.data
+    # ./benchmark bfs_explicit 4 21 1000000 > bfs_explicit.bench.data
+    # ./benchmark bfs_explicit_int 4 21 1000000 > bfs_explicit_int.bench.data
+    # ./benchmark veb_explicit_int 4 21 1000000 > veb_explicit_int.bench.data
+
+    rm benchmark
+
+fi
 
 gnuplot makeplot.plot

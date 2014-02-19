@@ -26,7 +26,7 @@ class PredSearchTreeFactory {
 public:
     PredSearchTreeFactory(const MemoryLayout &ml) : ml(ml) {}
 
-    PredSearchTree* createTree(const std::vector<int> &values) {
+    PredSearchTree* createTree(const std::vector<int> &values, const int skew = 50) {
         switch (ml) {
             case MemoryLayout::LINEAR:  return new LinearSearch(values); 
             case MemoryLayout::INORDER: return new InorderBinarySearch(values); 
@@ -36,10 +36,10 @@ public:
 
             // case MemoryLayout::INORDER_EXPLICIT: return new InorderBinarySearchExplicit(values); 
             // case MemoryLayout::INORDER_EXPLICIT_INT: return new InorderBinarySearchExplicitInt(values); 
-            case MemoryLayout::BFS_EXPLICIT: return new BFSBinarySearchExplicit(values); 
-            case MemoryLayout::BFS_EXPLICIT_INT: return new BFSBinarySearchExplicitInt(values); 
-            case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values); 
-            case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values); 
+            case MemoryLayout::BFS_EXPLICIT: return new BFSBinarySearchExplicit(values, skew); 
+            case MemoryLayout::BFS_EXPLICIT_INT: return new BFSBinarySearchExplicitInt(values, skew); 
+            case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values, skew); 
+            case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values, skew); 
             // case MemoryLayout::VEB_EXPLICIT: return new VEBBinarySearchExplicit(values); 
             case MemoryLayout::VEB_EXPLICIT_INT: return new VEBBinarySearchExplicitInt(values); 
 
