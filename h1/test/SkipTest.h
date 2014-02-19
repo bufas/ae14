@@ -31,6 +31,10 @@ public:
         #define RUN_SKIP_TEST(x,y,a,b) \
         RUN(Skip_ ## x ## _Every_ ## y ## _From_ ## a ## _To_ ## b);
 
+        RUN_SKIP_TEST(0,0,0, 1)
+        RUN_SKIP_TEST(0,0,0, 3)
+        RUN_SKIP_TEST(0,0,0, 7)
+
         RUN_SKIP_TEST(0,0,1, 7)
         RUN_SKIP_TEST(0,0,1,13)
         RUN_SKIP_TEST(0,0,1,25)
@@ -156,6 +160,11 @@ private:
         create_skip_test(v, p, x, y, a, b); \
         verify_skip_test(v, p, x, y, a, b); \
     }
+
+    // Full trees
+    MAKE_SKIP_TEST(0,0,0, 1)
+    MAKE_SKIP_TEST(0,0,0, 3)
+    MAKE_SKIP_TEST(0,0,0, 7)
 
     // Dangling node in right sub-tree
     MAKE_SKIP_TEST(0,0,1, 7)
