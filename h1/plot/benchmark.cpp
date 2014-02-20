@@ -28,7 +28,6 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, int element
     Timer timer;
     std::vector<long> times; // Vector to hold time of all iterations
 
-
     // Run the predecessor search a number of times
     int dummy = 0;
     for (int i = 0; i < iterations; i++) {

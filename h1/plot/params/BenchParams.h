@@ -61,6 +61,7 @@ BenchParams::BenchParams(int argc, char **argv) {
     random_seed       = (argc >= 9) ? intify_param(argv[8], 0) : time(nullptr);
 }
 
+// TODO duplicated in SkewParams
 int BenchParams::intify_param(const char *arg, int default_val) {
     std::istringstream iss(arg);
     int res;
