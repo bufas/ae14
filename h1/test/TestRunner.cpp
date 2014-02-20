@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "../MemoryLayout.h"
-#include "../Params.h"
 #include "BasicTest.h"
 #include "SkipTest.h"
 
