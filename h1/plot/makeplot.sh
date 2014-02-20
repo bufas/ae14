@@ -6,7 +6,7 @@ if [ "$1" == 'skew' ]; then
 
     clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark_skew benchmark_skew.cpp
 
-    ./benchmark_skew 5 95 1000000 1000000 > dfs_explicit_int.skew.bench.data
+    ./benchmark_skew 5 95 1000000 100000 100 5 > dfs_explicit_int.skew.bench.data
 
     rm benchmark_skew
     gnuplot makeplot_skew.plot
