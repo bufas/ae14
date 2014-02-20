@@ -4,51 +4,49 @@
 #include <vector>
 #include <algorithm>
 #include <cstdio>
-#include <sstream>
 #include <fstream>
+#include <numeric> // std::accumulate
+
+#include "Timer.h"
+#include "params/BenchParams.h"
 
 #include "../PredSearchTreeFactory.h"
-#include "../MemoryLayout.h"
-#include "../Params.h"
 #include "../LinearSearch.h"
 #include "../InorderBinarySearch.h"
 #include "../BFSBinarySearch.h"
 #include "../DFSBinarySearch.h"
 
 /**
- * Output the minimum and maximum amount of time taken for a 
- * single query. This will allow us to add confidence bars to
- * the graphs. One possiblity could also be to remove the k 
- * fastest and slowest running times i.e. remove outliers.
- *
  * Use a better timer that can also measure cache misses and
  * branch mispredictions.
  */
 
-void print_data_line(int elems, int searches, struct timeval before, struct timeval after) {
-    // Calculate time
-    long utime = ((after.tv_sec - before.tv_sec) * 1000000) + after.tv_usec - before.tv_usec;
-    long stime = ((after.tv_sec - before.tv_sec) * 1000000) + after.tv_usec - before.tv_usec;
-
-    // Print the output
-    printf("%d\t%d\t%ld\n", elems, searches, (utime + stime));
-}
-
 /**
- * Does the actual timing of the searches
+ * Time queries on a specific tree size
  */
-void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements) {
-    struct timeval before, after;
-    gettimeofday(&before, nullptr); // start timer
+void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements, int iterations, int trim) {
+    Timer timer;
+    std::vector<long> times; // Vector to hold time of all iterations
+
 
     // Run the predecessor search a number of times
     int dummy = 0;
-    for (int q = 0; q < queries.size(); q++) {
-        dummy += t->pred(queries[q]);
+    for (int i = 0; i < iterations; i++) {
+        timer.start();
+        for (int q = 0; q < queries.size(); q++) {
+            dummy += t->pred(queries[q]);
+        }
+        timer.stop();
+        times.push_back(timer.get_microseconds());
     }
 
-    gettimeofday(&after, nullptr); // stop timer
-    print_data_line(elements, queries.size(), before, after); // Print time elapsed
+    std::sort(times.begin(), times.end());
+
+    // Calculate average time
+    long sum = std::accumulate(times.begin() + trim, times.end() - trim, 0l);
+    long avg = sum / (iterations - (trim * 2));
+
+    printf("%d\t%lu\t%ld\t%ld\t%ld\n", elements, queries.size(), avg, times[trim], times[times.size()-(trim + 1)]);
 
     // TODO use dummy, or the loop will be optimized away
     std::ofstream devnull;
@@ -57,70 +55,19 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, int element
     devnull.close();
 }
 
-int intify_param(const char arg[], int default_val) {
-    std::istringstream iss(arg);
-    int res;
-    
-    if (iss >> res) return res; // Successful conversion
-    return default_val;         // Unsuccessful conversion, return default value
-}
 
-Params parse_arguments(int argc, char *argv[]) {
-    // Check if there is enough parameters and print help message if not
-    if (argc < 5) {
-        std::cout << "Call this program with one of the following parameters" << std::endl;
-        std::cout << "\tmemory layout [linear, inorder, bfs, dfs, veb]" << std::endl;
-        std::cout << "\tminimum tree size (logarithmic)" << std::endl;
-        std::cout << "\tmaximum tree size (logarithmic)" << std::endl;
-        std::cout << "\tnumber of queries for each tree size" << std::endl;
-        std::cout << "\thow much to increment tree size each step (optional)" << std::endl;
-        std::cout << "\trandom seed (optional)" << std::endl;
-        std::cout << std::endl;
-        std::cout << "\tExample usage: " << argv[0] << " bfs 5 20 1000" << std::endl;
-        exit(-1);
-    }
-
-    Params p;
-    // Set the memory layout
-    std::string layout(argv[1]);
-    if (layout == "linear") p.memory_layout = MemoryLayout::LINEAR;
-    else if (layout == "inorder") p.memory_layout = MemoryLayout::INORDER;
-    else if (layout == "bfs") p.memory_layout = MemoryLayout::BFS;
-    else if (layout == "dfs") p.memory_layout = MemoryLayout::DFS;
-    else if (layout == "veb") p.memory_layout = MemoryLayout::VEB;
-    // else if (layout == "inorder_explicit") p.memory_layout = MemoryLayout::INORDER_EXPLICIT;
-    // else if (layout == "inorder_explicit_int") p.memory_layout = MemoryLayout::INORDER_EXPLICIT_INT;
-    else if (layout == "bfs_explicit") p.memory_layout = MemoryLayout::BFS_EXPLICIT;
-    else if (layout == "bfs_explicit_int") p.memory_layout = MemoryLayout::BFS_EXPLICIT_INT;
-    else if (layout == "dfs_explicit") p.memory_layout = MemoryLayout::DFS_EXPLICIT;
-    else if (layout == "dfs_explicit_int") p.memory_layout = MemoryLayout::DFS_EXPLICIT_INT;
-    // else if (layout == "veb_explicit") p.memory_layout = MemoryLayout::VEB_EXPLICIT;
-    else if (layout == "veb_explicit_int") p.memory_layout = MemoryLayout::VEB_EXPLICIT_INT;
-    else {
-        std::cout << "Parameter parsing: The memory layout given is not valid." << std::endl;
-        exit(-1);
-    }
-
-    // Set tree size bounds, number of queries, and random seed
-    p.min_log_tree_size = intify_param(argv[2], 10);
-    p.max_log_tree_size = intify_param(argv[3], 20);
-    p.no_of_queries     = intify_param(argv[4], 1000);
-    p.size_increment    = (argc >= 6) ? intify_param(argv[5], 0) : 0;
-    p.random_seed       = (argc >= 7) ? intify_param(argv[5], 0) : time(nullptr);
-
-    return p;
-}
-
-void print_output_header(const Params &p) {
+void print_output_header(const BenchParams &p) {
     std::cout << "# Timing predecessor search with the following parameters" << std::endl;
-    std::cout << "# \tmemory layout       : " << as_string(p.memory_layout) << std::endl;
-    std::cout << "# \tmin tree size (log) : " << p.min_log_tree_size << std::endl;
-    std::cout << "# \tmax tree size (log) : " << p.max_log_tree_size << std::endl;
-    std::cout << "# \tnumber of queries   : " << p.no_of_queries << std::endl;
-    std::cout << "# \tsize increment      : " << ((p.size_increment == 0) ? "*2" : std::to_string(p.size_increment)) << std::endl;
-    std::cout << "# \trandom seed         : " << p.random_seed << std::endl;
+    std::cout << "# \tmemory layout        : " << as_string(p.memory_layout) << std::endl;
+    std::cout << "# \tmin tree size (log)  : " << p.min_log_tree_size << std::endl;
+    std::cout << "# \tmax tree size (log)  : " << p.max_log_tree_size << std::endl;
+    std::cout << "# \tnumber of queries    : " << p.no_of_queries << std::endl;
+    std::cout << "# \tnumber of iterations : " << p.no_of_iterations << std::endl;
+    std::cout << "# \tresults trimmed      : " << p.trim << std::endl;
+    std::cout << "# \tsize increment       : " << ((p.size_increment == 0) ? "*2" : std::to_string(p.size_increment)) << std::endl;
+    std::cout << "# \trandom seed          : " << p.random_seed << std::endl;
     std::cout << "#" << std::endl;
-    std::cout << "# Datalines: log(tree size), tree size, #searches, time in us" << std::endl;
+    std::cout << "# Datalines: tree size, #searches, time in us, fastest time in us, slowest time in us" << std::endl;
 }
 
 /**
@@ -133,33 +80,28 @@ void print_output_header(const Params &p) {
  *   - Random seed (optional)
  */
 int main(int argc, char *argv[]) {
-    // Parse program arguments
-    Params p = parse_arguments(argc, argv);
-
-    // Seed random generator
+    // Initialization
+    BenchParams p(argc, argv);
     srand(p.random_seed);
+    print_output_header(p);
 
-    // Generate random numbers for the queries
+    int max_tree_size = 1 << p.max_log_tree_size;
+    int min_tree_size = 1 << p.min_log_tree_size;
+    std::vector<int> values; // The tree is built from this vector
+
+    // Generate queries
     std::vector<int> queries;
     for (int q = 0; q < p.no_of_queries; q++) queries.push_back(rand());
 
-    print_output_header(p);
-    std::vector<int> values; // The tree is built from this vector
     int tree_size = 1 << p.min_log_tree_size;
     PredSearchTreeFactory tree_factory(p.memory_layout);
-    while (tree_size <= 1 << p.max_log_tree_size) {
+    for (int tree_size = min_tree_size; tree_size <= max_tree_size; tree_size += (p.size_increment == 0) ? tree_size : p.size_increment) {
         // Generate random numbers to search for (reuse old numbers)
         const int additional_elements = tree_size - values.size();
         for (int q = 0; q < additional_elements; q++) values.push_back(rand());
 
-        // Build the tree from the values vector
+        // Build and bench
         std::auto_ptr<PredSearchTree> t(tree_factory.createTree(values));
-
-        // Benchmark the predecessor searches
-        bench(t.get(), queries, tree_size);
-
-        // Increment tree size
-        if (p.size_increment == 0) tree_size *= 2;
-        else tree_size += p.size_increment;
+        bench(t.get(), queries, tree_size, p.no_of_iterations, p.trim);
     }
 }
