@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
+#include <memory> // std::unique_ptr
 #include <numeric> // std::accumulate
 
 #include "Timer.h"
@@ -100,7 +101,7 @@ int main(int argc, char *argv[]) {
         for (int q = 0; q < additional_elements; q++) values.push_back(rand());
 
         // Build and bench
-        std::auto_ptr<PredSearchTree> t(tree_factory.createTree(values));
+        std::unique_ptr<PredSearchTree> t(tree_factory.createTree(values));
         bench(t.get(), queries, tree_size, p.no_of_iterations, p.trim);
     }
 }

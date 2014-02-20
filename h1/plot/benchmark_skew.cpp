@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
+#include <memory> // std::unique_ptr
 #include <numeric> // std::accumulate
 
 #include "Timer.h"
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]) {
     PredSearchTreeFactory tree_factory(MemoryLayout::DFS_EXPLICIT_INT);
     for (int skew = p.min_skew; skew <= p.max_skew; skew++) {
         // Build a new tree with the same values but different skew factor
-        std::auto_ptr<PredSearchTree> t(tree_factory.createTree(values, skew));
+        std::unique_ptr<PredSearchTree> t(tree_factory.createTree(values, skew));
 
         // Benchmark the predecessor searches
         bench(t.get(), queries, skew, p.tree_size, p.iterations, p.trim);
