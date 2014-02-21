@@ -26,47 +26,26 @@
 /**
  * Time queries on a specific tree size
  */
-void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements, int iterations, int trim) {
-    Timer timer;
-    std::vector<long> times; // Vector to hold time of all iterations
-    std::vector<long long> bms;
-    std::vector<long long> cms;
+void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements, const BenchParams &p) {
+    Timer timer(p.perf_var);
 
     // Run the predecessor search a number of times
     int dummy = 0;
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < p.no_of_iterations; i++) {
         timer.start();
-        for (int q = 0; q < queries.size(); q++) {
+        for (int q = 0; q < p.no_of_queries; q++) {
             dummy += t->pred(queries[q]);
         }
         timer.stop();
-        times.push_back(timer.get_microseconds());
-        bms.push_back(timer.get_branch_misses());
-        cms.push_back(timer.get_cache_misses());
     }
 
-    // Calculate average time
-    std::sort(times.begin(), times.end());
-    long sum = std::accumulate(times.begin() + trim, times.end() - trim, 0l);
-    long avg = sum / (iterations - (trim * 2));
+    printf("%d\t%d\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", 
+            elements, p.no_of_queries, 
+            timer.get_avg_time(p.trim), timer.get_lowest_time(p.trim), timer.get_highest_time(p.trim), 
+            timer.get_avg_count(p.trim), timer.get_lowest_count(p.trim), timer.get_highest_count(p.trim), 
+            timer.get_avg_ratio(p.trim), timer.get_lowest_ratio(p.trim), timer.get_highest_ratio(p.trim));
 
-    // Calculate average branch misses
-    std::sort(bms.begin(), bms.end());
-    long long sum_bm = std::accumulate(bms.begin() + trim, bms.end() - trim, 0l);
-    long long avg_bm = sum_bm / (iterations - (trim * 2));
-
-    // Calculate average branch misses
-    std::sort(cms.begin(), cms.end());
-    long long sum_cm = std::accumulate(cms.begin() + trim, cms.end() - trim, 0l);
-    long long avg_cm = sum_cm / (iterations - (trim * 2));
-
-    printf("%d\t%lu\t%ld\t%ld\t%ld\t%lld\t%lld\t%lld\t%lld\t%lld\t%lld\n", 
-            elements, queries.size(), 
-            avg, times[trim], times[times.size()-(trim + 1)], 
-            avg_bm, bms[trim], bms[bms.size()-(trim + 1)],
-            avg_cm, cms[trim], cms[cms.size()-(trim + 1)]);
-
-    // TODO use dummy, or the loop will be optimized away
+    // Use dummy, or the loop will be optimized away
     std::ofstream devnull;
     devnull.open("/dev/null");
     devnull << dummy;
@@ -77,6 +56,7 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, int element
 void print_output_header(const BenchParams &p) {
     std::cout << "# Timing predecessor search with the following parameters" << std::endl;
     std::cout << "# \tmemory layout        : " << as_string(p.memory_layout) << std::endl;
+    std::cout << "# \tperformance counter  : " << as_string(p.perf_var) << std::endl;
     std::cout << "# \tmin tree size (log)  : " << p.min_log_tree_size << std::endl;
     std::cout << "# \tmax tree size (log)  : " << p.max_log_tree_size << std::endl;
     std::cout << "# \tnumber of queries    : " << p.no_of_queries << std::endl;
@@ -85,18 +65,9 @@ void print_output_header(const BenchParams &p) {
     std::cout << "# \tsize increment       : " << ((p.size_increment == 0) ? "*2" : std::to_string(p.size_increment)) << std::endl;
     std::cout << "# \trandom seed          : " << p.random_seed << std::endl;
     std::cout << "#" << std::endl;
-    std::cout << "# Datalines: tree size, #searches, time in us, fastest time in us, slowest time in us" << std::endl;
+    std::cout << "# Datalines: tree size, #searches, TIME[avg, fast, slow] in us, COUNT[avg, low, high], RATIO[avg, low, high]" << std::endl;
 }
 
-/**
- * The program takes the following parameters
- *   - Memory layout (linear, bfs, dfs, or veb)
- *   - Smallest tree size (logarithmic)
- *   - Largest tree size (logarithmic)
- *   - Number of queries (pr. tree size)
- *   - How much to increment size each step (optional)
- *   - Random seed (optional)
- */
 int main(int argc, char *argv[]) {
     // Initialization
     BenchParams p(argc, argv);
@@ -120,6 +91,6 @@ int main(int argc, char *argv[]) {
 
         // Build and bench
         std::unique_ptr<PredSearchTree> t(tree_factory.createTree(values));
-        bench(t.get(), queries, tree_size, p.no_of_iterations, p.trim);
+        bench(t.get(), queries, tree_size, p);
     }
 }

@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include "../../MemoryLayout.h"
+#include "../PerfVar.h"
 
 class BenchParams {
 
@@ -10,6 +11,7 @@ public:
 
     // Data fields (public for easier access)
     MemoryLayout memory_layout;     // The memory layout of the tree
+    PerfVar perf_var;               // The performance variable to count
     int min_log_tree_size;          // Minimum tree size (logarithmic)
     int max_log_tree_size;          // Maximum tree size (logarithmic)
     int no_of_queries;              // Number of queries to run each iteration
@@ -26,7 +28,7 @@ private:
 
 BenchParams::BenchParams(int argc, char **argv) {
     // Check if there is enough parameters and print help message if not
-    if (argc < 7) {
+    if (argc < 8) {
         print_usage(argv[0]);
         exit(-1);
     }
@@ -51,14 +53,27 @@ BenchParams::BenchParams(int argc, char **argv) {
         exit(-1);
     }
 
+    // Set the performance variable
+    std::string pvar(argv[2]);
+    if (pvar == "BRANCH") perf_var = PerfVar::BRANCH;
+    else if (pvar == "BPU") perf_var = PerfVar::BPU;
+    else if (pvar == "HW_CACHE") perf_var = PerfVar::HW_CACHE;
+    else if (pvar == "LL_CACHE") perf_var = PerfVar::LL_CACHE;
+    else if (pvar == "L1_CACHE") perf_var = PerfVar::L1_CACHE;
+    else if (pvar == "DATA_TLB") perf_var = PerfVar::DATA_TLB;
+    else {
+        std::cout << "Parameter parsing: The performance variable given is not valid." << std::endl;
+        exit(-1);
+    }
+
     // Set tree size bounds, number of queries, and random seed
-    min_log_tree_size = intify_param(argv[2], 5);
-    max_log_tree_size = intify_param(argv[3], 20);
-    no_of_queries     = intify_param(argv[4], 10000);
-    no_of_iterations  = intify_param(argv[5], 100);
-    trim              = intify_param(argv[6], 5);
-    size_increment    = (argc >= 8) ? intify_param(argv[7], 0) : 0;
-    random_seed       = (argc >= 9) ? intify_param(argv[8], 0) : time(nullptr);
+    min_log_tree_size = intify_param(argv[3], 5);
+    max_log_tree_size = intify_param(argv[4], 20);
+    no_of_queries     = intify_param(argv[5], 10000);
+    no_of_iterations  = intify_param(argv[6], 100);
+    trim              = intify_param(argv[7], 5);
+    size_increment    = (argc >= 9) ? intify_param(argv[8], 0) : 0;
+    random_seed       = (argc >= 10) ? intify_param(argv[9], 0) : time(nullptr);
 }
 
 // TODO duplicated in SkewParams
