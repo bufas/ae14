@@ -20,5 +20,5 @@ g++ -O3 -std=c++11 -o benchmark ../benchmark.cpp
 # ./benchmark veb_explicit_int 10 21 100000 100 5 > res/veb_explicit_int.bench.data
 
 rm benchmark
-gnuplot makeplot.plot
+gnuplot ../makeplot.plot
 
