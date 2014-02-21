@@ -8,7 +8,13 @@
 #include <memory> // std::unique_ptr
 #include <numeric> // std::accumulate
 
-#include "Timer.h"
+// Load a different timer for linux
+#ifdef __linux__
+    #include "linux/Timer.h"
+#else
+    #include "Timer.h"
+#endif
+
 #include "params/BenchParams.h"
 
 #include "../PredSearchTreeFactory.h"
@@ -18,16 +24,13 @@
 #include "../DFSBinarySearch.h"
 
 /**
- * Use a better timer that can also measure cache misses and
- * branch mispredictions.
- */
-
-/**
  * Time queries on a specific tree size
  */
 void bench(const PredSearchTree *t, const std::vector<int> &queries, int elements, int iterations, int trim) {
     Timer timer;
     std::vector<long> times; // Vector to hold time of all iterations
+    std::vector<long long> bms;
+    std::vector<long long> cms;
 
     // Run the predecessor search a number of times
     int dummy = 0;
@@ -38,15 +41,30 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, int element
         }
         timer.stop();
         times.push_back(timer.get_microseconds());
+        bms.push_back(timer.get_branch_misses());
+        cms.push_back(timer.get_cache_misses());
     }
 
-    std::sort(times.begin(), times.end());
-
     // Calculate average time
+    std::sort(times.begin(), times.end());
     long sum = std::accumulate(times.begin() + trim, times.end() - trim, 0l);
     long avg = sum / (iterations - (trim * 2));
 
-    printf("%d\t%lu\t%ld\t%ld\t%ld\n", elements, queries.size(), avg, times[trim], times[times.size()-(trim + 1)]);
+    // Calculate average branch misses
+    std::sort(bms.begin(), bms.end());
+    long long sum_bm = std::accumulate(bms.begin() + trim, bms.end() - trim, 0l);
+    long long avg_bm = sum_bm / (iterations - (trim * 2));
+
+    // Calculate average branch misses
+    std::sort(cms.begin(), cms.end());
+    long long sum_cm = std::accumulate(cms.begin() + trim, cms.end() - trim, 0l);
+    long long avg_cm = sum_cm / (iterations - (trim * 2));
+
+    printf("%d\t%lu\t%ld\t%ld\t%ld\t%lld\t%lld\t%lld\t%lld\t%lld\t%lld\n", 
+            elements, queries.size(), 
+            avg, times[trim], times[times.size()-(trim + 1)], 
+            avg_bm, bms[trim], bms[bms.size()-(trim + 1)],
+            avg_cm, cms[trim], cms[cms.size()-(trim + 1)]);
 
     // TODO use dummy, or the loop will be optimized away
     std::ofstream devnull;

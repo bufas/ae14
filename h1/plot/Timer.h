@@ -11,6 +11,10 @@ public:
         return (secs * 1000000) + usecs;
     }
 
+    // We can only measure this on linux (look in linux/Timer.h)
+    long long get_branch_misses() { return 0; }
+    long long get_cache_misses() { return 0; }
+
 private:
     struct timeval before;
     struct timeval after;

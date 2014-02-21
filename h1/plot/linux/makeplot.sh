@@ -3,7 +3,7 @@
 rm -rf res
 mkdir res
 
-g++ -O3 -std=c++11 -o benchmark benchmark_linux.cpp
+g++ -O3 -std=c++11 -o benchmark ../benchmark.cpp
 
 # ./benchmark linear > res/linear.bench.data
 # ./benchmark inorder 4 21 1000000 20000 > res/inorder.bench.data
