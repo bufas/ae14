@@ -44,9 +44,9 @@ public:
     long get_lowest_count_access(int exclude = 0) { return -1; }
     long get_highest_count_access(int exclude = 0) { return -1; }
 
-    long get_avg_count_ratio(int exclude = 0) { return -1; }
-    long get_lowest_count_ratio(int exclude = 0) { return -1; }
-    long get_highest_count_ratio(int exclude = 0) { return -1; }
+    double get_avg_count_ratio(int exclude = 0) { return -1; }
+    double get_lowest_count_ratio(int exclude = 0) { return -1; }
+    double get_highest_count_ratio(int exclude = 0) { return -1; }
 
 
 private:

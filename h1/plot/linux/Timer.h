@@ -11,11 +11,13 @@
 #include <sys/ioctl.h>
 #include <asm/unistd.h>
 
+#include "../PerfVar.h"
+
 static long perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu, int group_fd, unsigned long flags);
 
 class Timer {
 public:
-    Timer();
+    Timer(const PerfVar &pv);
     ~Timer();
 
     void start();
@@ -35,16 +37,16 @@ public:
     long get_lowest_count_access(int exclude = 0)  { sort_accesses(); return accesses[exclude]; }
     long get_highest_count_access(int exclude = 0) { sort_accesses(); return accesses[accesses.size() - exclude - 1]; }
 
-    long get_avg_count_ratio(int exclude = 0)     { sort_ratios(); return get_avg(ratios, exclude); }
-    long get_lowest_count_ratio(int exclude = 0)  { sort_ratios(); return ratios[exclude]; }
-    long get_highest_count_ratio(int exclude = 0) { sort_ratios(); return ratios[ratios.size() - exclude - 1]; }
+    double get_avg_count_ratio(int exclude = 0)     { sort_ratios(); return get_avg(ratios, exclude); }
+    double get_lowest_count_ratio(int exclude = 0)  { sort_ratios(); return ratios[exclude]; }
+    double get_highest_count_ratio(int exclude = 0) { sort_ratios(); return ratios[ratios.size() - exclude - 1]; }
 
 private:
-    /**
-     * Precondition: the vector must be sorted
-     */
-    double get_avg(const std::vector<long> &v, int exclude) {
-        long sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0l);
+    // Precondition: the vector must be sorted
+    // Template as it must support both long and double
+    template<typename T>
+    T get_avg(const std::vector<T> &v, int exclude) {
+        T sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0l);
         return sum / (v.size() - (exclude * 2));
     }
 
@@ -53,7 +55,9 @@ private:
     void sort_accesses() { sort_counter(accesses, accesses_sorted); }
     void sort_ratios()   { sort_counter(ratios,   ratios_sorted);   }
 
-    void sort_counter(std::vector &v, bool &b) {
+    // Template as it must support both long and double
+    template<typename T>
+    void sort_counter(std::vector<T> &v, bool &b) {
         if (!b) std::sort(v.begin(), v.end());
         b = true;
     }
@@ -68,8 +72,8 @@ private:
         return (cache) | (op << 8) | (result << 16);
     }
 
-    long long read_perf_event_open_value(const std::string &group, const unsigned long config);
-    void init_perf_event_open(const std::string &group, const unsigned int type, const unsigned long config);
+    long long read_perf_event_open_value(int ct);
+    void init_perf_event_open(const unsigned int type, const unsigned long config);
 
     PerfVar pv;
     struct timeval before;
@@ -77,7 +81,7 @@ private:
     std::vector<long> times;
     std::vector<long> misses;
     std::vector<long> accesses;
-    std::vector<long> ratio;
+    std::vector<double> ratios;
     bool times_sorted;
     bool misses_sorted;
     bool accesses_sorted;
@@ -87,8 +91,8 @@ private:
     std::vector<int> handles; // Leader is handle[0]
 };
 
-Timer::Timer(PerfVar pv) : pv(pv) {
-    switch(pw) {
+Timer::Timer(const PerfVar &pv) : pv(pv) {
+    switch(pv) {
         case PerfVar::BRANCH:
             init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES);
             init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
@@ -141,7 +145,7 @@ void Timer::stop() {
     times.push_back(calc_lap_time());
     misses.push_back(read_perf_event_open_value(0));
     accesses.push_back(read_perf_event_open_value(1));
-    ratio.push_back((100.0 * read_perf_event_open_value(0)) / read_perf_event_open_value(1));
+    ratios.push_back((100.0 * read_perf_event_open_value(0)) / read_perf_event_open_value(1));
     times_sorted = misses_sorted = accesses_sorted = ratios_sorted = false;
 }
 
@@ -161,12 +165,8 @@ long long Timer::read_perf_event_open_value(int ct) {
         exit(EXIT_FAILURE);
     }
 
-    // std::cout << "Printing results [";
-    // for (int i = 0; i < configs[group].size() + 1; i++) std::cout << " " << results[i];
-    // std::cout << " ]" << std::endl;
-
     // Return the requested value
-    return results[ct];
+    return results[ct + 1];
 }
 
 /**
