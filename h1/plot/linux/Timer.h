@@ -21,54 +21,110 @@ public:
     void start();
     void stop();
 
-    long get_microseconds() {
-        long secs  = after.tv_sec  - before.tv_sec;
+    // Getters for time
+    long get_avg_time(int exclude = 0)     { sort_times(); return get_avg(times, exclude); }
+    long get_lowest_time(int exclude = 0)  { sort_times(); return times[exclude]; }
+    long get_highest_time(int exclude = 0) { sort_times(); return times[times.size() - exclude - 1]; }
+
+    // Getters for counters
+    long get_avg_count_miss(int exclude = 0)     { sort_misses(); return get_avg(misses, exclude); }
+    long get_lowest_count_miss(int exclude = 0)  { sort_misses(); return misses[exclude]; }
+    long get_highest_count_miss(int exclude = 0) { sort_misses(); return misses[misses.size() - exclude - 1]; }
+
+    long get_avg_count_access(int exclude = 0)     { sort_accesses(); return get_avg(accesses, exclude); }
+    long get_lowest_count_access(int exclude = 0)  { sort_accesses(); return accesses[exclude]; }
+    long get_highest_count_access(int exclude = 0) { sort_accesses(); return accesses[accesses.size() - exclude - 1]; }
+
+    long get_avg_count_ratio(int exclude = 0)     { sort_ratios(); return get_avg(ratios, exclude); }
+    long get_lowest_count_ratio(int exclude = 0)  { sort_ratios(); return ratios[exclude]; }
+    long get_highest_count_ratio(int exclude = 0) { sort_ratios(); return ratios[ratios.size() - exclude - 1]; }
+
+private:
+    /**
+     * Precondition: the vector must be sorted
+     */
+    double get_avg(const std::vector<long> &v, int exclude) {
+        long sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0l);
+        return sum / (v.size() - (exclude * 2));
+    }
+
+    void sort_times()    { sort_counter(times,    times_sorted);    }
+    void sort_misses()   { sort_counter(misses,   misses_sorted);   }
+    void sort_accesses() { sort_counter(accesses, accesses_sorted); }
+    void sort_ratios()   { sort_counter(ratios,   ratios_sorted);   }
+
+    void sort_counter(std::vector &v, bool &b) {
+        if (!b) std::sort(v.begin(), v.end());
+        b = true;
+    }
+
+    long calc_lap_time() {
+        long secs = after.tv_sec - before.tv_sec;
         long usecs = after.tv_usec - before.tv_usec;
         return (secs * 1000000) + usecs;
     }
 
-    long long get_branch_misses() {
-        return read_perf_event_open_value("branch", PERF_COUNT_HW_BRANCH_MISSES);
+    unsigned long calc_cache_config(unsigned int cache, unsigned int op, unsigned int result) {
+        return (cache) | (op << 8) | (result << 16);
     }
 
-    long long get_cache_misses() {
-        return read_perf_event_open_value("branch", PERF_COUNT_HW_CACHE_MISSES);
-    }
-
-
-private:
     long long read_perf_event_open_value(const std::string &group, const unsigned long config);
-
     void init_perf_event_open(const std::string &group, const unsigned int type, const unsigned long config);
 
+    PerfVar pv;
     struct timeval before;
     struct timeval after;
+    std::vector<long> times;
+    std::vector<long> misses;
+    std::vector<long> accesses;
+    std::vector<long> ratio;
+    bool times_sorted;
+    bool misses_sorted;
+    bool accesses_sorted;
+    bool ratios_sorted;
 
     // File descriptors for various counters
-    std::vector<int> open_handles;
-
-    std::unordered_map<std::string, int> leaders;
-    std::unordered_map<std::string, std::vector<unsigned long>> configs;
+    std::vector<int> handles; // Leader is handle[0]
 };
 
-Timer::Timer() {
-    // init_perf_event_open("branch", PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
-    init_perf_event_open("branch", PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES);
-
-    // init_perf_event_open("cache", PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES);
-    init_perf_event_open("branch", PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES);
+Timer::Timer(PerfVar pv) : pv(pv) {
+    switch(pw) {
+        case PerfVar::BRANCH:
+            init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES);
+            init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+            break;
+        case PerfVar::BPU:
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_BPU, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_MISS));
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_BPU, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_ACCESS));
+            break;
+        case PerfVar::HW_CACHE:
+            init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES);
+            init_perf_event_open(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES);
+            break;
+        case PerfVar::LL_CACHE:
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_LL, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_MISS));
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_LL, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_ACCESS));
+            break;
+        case PerfVar::L1_CACHE:
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_L1D, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_MISS));
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_L1D, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_ACCESS));
+            break;
+        case PerfVar::DATA_TLB:
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_DTLB, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_MISS));
+            init_perf_event_open(PERF_TYPE_HW_CACHE, calc_cache_config(PERF_COUNT_HW_CACHE_DTLB, PERF_COUNT_HW_CACHE_OP_READ, PERF_COUNT_HW_CACHE_RESULT_ACCESS));
+            break;
+    }
 }
 
 Timer::~Timer() {
-    for (auto i = open_handles.begin(); i != open_handles.end(); ++i) close(*i);
+    // Close all open file handles
+    for (auto i = handles.begin(); i != handles.end(); ++i) close(*i);
 }
 
 void Timer::start() {
     // Reset all counters and start them
-    for (auto i = leaders.begin(); i != leaders.end(); ++i) {
-        ioctl(i->second, PERF_EVENT_IOC_RESET, 0); 
-        ioctl(i->second, PERF_EVENT_IOC_ENABLE, 0);
-    }
+    ioctl(handles[0], PERF_EVENT_IOC_RESET, 0); 
+    ioctl(handles[0], PERF_EVENT_IOC_ENABLE, 0);
 
     // Start timer
     gettimeofday(&before, nullptr);
@@ -79,28 +135,25 @@ void Timer::stop() {
     gettimeofday(&after, nullptr);
 
     // Stop the counters
-    for (auto i = leaders.begin(); i != leaders.end(); ++i) {
-        ioctl(i->second, PERF_EVENT_IOC_DISABLE, 0);
-    }
+    ioctl(handles[0], PERF_EVENT_IOC_DISABLE, 0);
+
+    // Update value lists
+    times.push_back(calc_lap_time());
+    misses.push_back(read_perf_event_open_value(0));
+    accesses.push_back(read_perf_event_open_value(1));
+    ratio.push_back((100.0 * read_perf_event_open_value(0)) / read_perf_event_open_value(1));
+    times_sorted = misses_sorted = accesses_sorted = ratios_sorted = false;
 }
 
-long long Timer::read_perf_event_open_value(const std::string &group, const unsigned long config) {
-    // Check if the group exists
-    if (leaders.count(group) == 0) {
-        std::cout << "Error! Reading a value from a non existant group ("<<group<<")\n" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // Get the leader of the group (file descriptor)
-    int leader = leaders.find(group)->second;
-
+/**
+ * The parameter should be either 0 or 1.
+ *   - 0 will return counter misses
+ *   - 1 will return counter accesses
+ */
+long long Timer::read_perf_event_open_value(int ct) {
     // Read from the leader
-    long long results[configs[group].size() + 1];
-    int ret = read(leader, &results, sizeof(results));
-
-    // std::cout << "Printing results [";
-    // for (int i = 0; i < configs[group].size() + 1; i++) std::cout << " " << results[i];
-    // std::cout << " ]" << std::endl;
+    long long results[3]; // nr + 2 values
+    int ret = read(handles[0], &results, sizeof(results));
 
     // Check for errors while reading
     if (ret < 0) {
@@ -108,15 +161,13 @@ long long Timer::read_perf_event_open_value(const std::string &group, const unsi
         exit(EXIT_FAILURE);
     }
 
-    // Return the requested value
-    auto v = configs[group];
-    for (int i = 0; i < v.size(); ++i) {
-        if (v[i] == config) {
-            return results[i + 1];
-        }
-    }
-}
+    // std::cout << "Printing results [";
+    // for (int i = 0; i < configs[group].size() + 1; i++) std::cout << " " << results[i];
+    // std::cout << " ]" << std::endl;
 
+    // Return the requested value
+    return results[ct];
+}
 
 /**
  * This is an adapted version of the example
@@ -125,7 +176,7 @@ long long Timer::read_perf_event_open_value(const std::string &group, const unsi
  *
  * Very old, much ANSI-C, WOW, such compatible
  */
-void Timer::init_perf_event_open(const std::string &group, const unsigned int type, const unsigned long config) {
+void Timer::init_perf_event_open(const unsigned int type, const unsigned long config) {
     // Create the struct which defines what should be measured
     struct perf_event_attr pe;
     memset(&pe, 0, sizeof(struct perf_event_attr));
@@ -137,8 +188,7 @@ void Timer::init_perf_event_open(const std::string &group, const unsigned int ty
 
     // Use the mysterious function to get a file descriptor for the data file
     int new_fd;
-    auto it_group_leader = leaders.find(group);
-    if (it_group_leader == leaders.end()) {
+    if (handles.size() == 0) {
         // Create a leader
         pe.disabled    = 1;
         pe.read_format = PERF_FORMAT_GROUP;
@@ -148,22 +198,18 @@ void Timer::init_perf_event_open(const std::string &group, const unsigned int ty
             fprintf(stderr, "Error opening leader %llx\n", pe.config);
             exit(EXIT_FAILURE);
         }
-
-        // Update the hardware leader
-        leaders[group] = new_fd;
     }
     else {
         // Create a slave
         pe.disabled = 0; // Slaves are still disabled when leader is disabled
-        new_fd = perf_event_open(&pe, 0, -1, it_group_leader->second, 0);
+        new_fd = perf_event_open(&pe, 0, -1, handles[0], 0);
         if (new_fd == -1) {
             fprintf(stderr, "Error connecting to leader %llx. Errno: %d\n", pe.config, errno);
             exit(EXIT_FAILURE);
         }
     }
 
-    open_handles.push_back(new_fd);   // Remember the file descriptors so we can close them again
-    configs[group].push_back(config); // Remember the index of the configs so they can be read
+    handles.push_back(new_fd); // Remember the file descriptors so we can close them again
 }
 
 /**
