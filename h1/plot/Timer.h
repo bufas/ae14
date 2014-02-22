@@ -36,13 +36,17 @@ public:
     }
 
     // Getters for counters. We can only measure this on linux (look in linux/Timer.h)
-    long get_avg_count(int exclude = 0) { return -1; }
-    long get_lowest_count(int exclude = 0) { return -1; }
-    long get_highest_count(int exclude = 0) { return -1; }
+    long get_avg_count_miss(int exclude = 0) { return -1; }
+    long get_lowest_count_miss(int exclude = 0) { return -1; }
+    long get_highest_count_miss(int exclude = 0) { return -1; }
 
-    long get_avg_ratio(int exclude = 0) { return -1; }
-    long get_lowest_ratio(int exclude = 0) { return -1; }
-    long get_highest_ratio(int exclude = 0) { return -1; }
+    long get_avg_count_access(int exclude = 0) { return -1; }
+    long get_lowest_count_access(int exclude = 0) { return -1; }
+    long get_highest_count_access(int exclude = 0) { return -1; }
+
+    long get_avg_count_ratio(int exclude = 0) { return -1; }
+    long get_lowest_count_ratio(int exclude = 0) { return -1; }
+    long get_highest_count_ratio(int exclude = 0) { return -1; }
 
 
 private:

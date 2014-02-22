@@ -39,11 +39,12 @@ void bench(const PredSearchTree *t, const std::vector<int> &queries, int element
         timer.stop();
     }
 
-    printf("%d\t%d\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", 
+    printf("%d\t%d\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", 
             elements, p.no_of_queries, 
             timer.get_avg_time(p.trim), timer.get_lowest_time(p.trim), timer.get_highest_time(p.trim), 
-            timer.get_avg_count(p.trim), timer.get_lowest_count(p.trim), timer.get_highest_count(p.trim), 
-            timer.get_avg_ratio(p.trim), timer.get_lowest_ratio(p.trim), timer.get_highest_ratio(p.trim));
+            timer.get_avg_count_miss(p.trim), timer.get_lowest_count_miss(p.trim), timer.get_highest_count_miss(p.trim), 
+            timer.get_avg_count_access(p.trim), timer.get_lowest_count_access(p.trim), timer.get_highest_count_access(p.trim), 
+            timer.get_avg_count_ratio(p.trim), timer.get_lowest_count_ratio(p.trim), timer.get_highest_count_ratio(p.trim));
 
     // Use dummy, or the loop will be optimized away
     std::ofstream devnull;
@@ -65,7 +66,7 @@ void print_output_header(const BenchParams &p) {
     std::cout << "# \tsize increment       : " << ((p.size_increment == 0) ? "*2" : std::to_string(p.size_increment)) << std::endl;
     std::cout << "# \trandom seed          : " << p.random_seed << std::endl;
     std::cout << "#" << std::endl;
-    std::cout << "# Datalines: tree size, #searches, TIME[avg, fast, slow] in us, COUNT[avg, low, high], RATIO[avg, low, high]" << std::endl;
+    std::cout << "# Datalines: tree size, #searches, TIME[avg, fast, slow] in us, MISS[avg, low, high], ACCESS[avg, low, high], RATIO[avg, low, high]" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
