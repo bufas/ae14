@@ -48,6 +48,7 @@ BenchParams::BenchParams(int argc, char **argv) {
     else if (layout == "dfs_explicit_int") memory_layout = MemoryLayout::DFS_EXPLICIT_INT;
     // else if (layout == "veb_explicit") memory_layout = MemoryLayout::VEB_EXPLICIT;
     else if (layout == "veb_explicit_int") memory_layout = MemoryLayout::VEB_EXPLICIT_INT;
+    else if (layout == "constant") memory_layout = MemoryLayout::CONSTANT;
     else {
         std::cout << "Parameter parsing: The memory layout given is not valid." << std::endl;
         exit(-1);
