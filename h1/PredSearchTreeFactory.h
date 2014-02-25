@@ -22,6 +22,8 @@
 // #include "VEBBinarySearchExplicit.h"
 #include "VEBBinarySearchExplicitInt.h"
 
+#include "ConstantSearch.h"
+
 class PredSearchTreeFactory {
 public:
     PredSearchTreeFactory(const MemoryLayout &ml) : ml(ml) {}
@@ -42,6 +44,8 @@ public:
             case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values, skew); 
             // case MemoryLayout::VEB_EXPLICIT: return new VEBBinarySearchExplicit(values); 
             case MemoryLayout::VEB_EXPLICIT_INT: return new VEBBinarySearchExplicitInt(values); 
+
+            case MemoryLayout::CONSTANT: return new ConstantSearch(values); 
 
             default:
                 std::cout << "THIS IS VERY WRONG!" << std::endl;

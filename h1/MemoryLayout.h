@@ -21,7 +21,9 @@ enum class MemoryLayout {
     INORDER_EXPLICIT_INT,
     BFS_EXPLICIT_INT,
     DFS_EXPLICIT_INT,
-    VEB_EXPLICIT_INT
+    VEB_EXPLICIT_INT,
+
+    CONSTANT
 };
 
 /**
@@ -45,6 +47,8 @@ std::string as_string(const MemoryLayout &ml) {
         case MemoryLayout::BFS_EXPLICIT_INT:     return "explicit int BFS";
         case MemoryLayout::DFS_EXPLICIT_INT:     return "explicit int DFS";
         case MemoryLayout::VEB_EXPLICIT_INT:     return "explicit int vEB";
+
+        case MemoryLayout::CONSTANT:             return "constant";
 
         default:                                 return nullptr;
     }
