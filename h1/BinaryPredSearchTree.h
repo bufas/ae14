@@ -21,25 +21,21 @@ public:
      * Default pred search impl for binary search trees
      */
     virtual int pred(int x) const {
-        if (tree.empty()) return -1;
-
-        int pred = 0;
+        int pred = -1;
         int idx = get_root_idx(); // Set index to the root
-        bool only_left = true;
 
         while (idx < tree.size()) {
-            if (tree[idx] == x) return x;
+            if (tree[idx] == x) return x; // This line can be removed
             
-            if (tree[idx] < x) {
-                pred = idx;
-                only_left = false;
-                idx = child_right(idx);
-            } else {
+            if (tree[idx] > x) {
                 idx = child_left(idx);
+            } else {
+                pred = tree[idx];
+                idx = child_right(idx);
             }
         }
 
-        return (only_left) ? -1 : tree[pred];
+        return pred;
     }
 
     virtual void print() const {
