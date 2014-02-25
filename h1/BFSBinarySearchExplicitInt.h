@@ -57,6 +57,7 @@ public:
     BFSBinarySearchExplicitInt(const std::vector<int> &v, int skew = 50) : BinaryExplicitIntPredSearchTree(v) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
+        temp.erase(std::unique(temp.begin(), temp.end()), temp.end());
         build(temp, 0, 0, temp.size() - 1, skew);
     }
 

@@ -13,6 +13,7 @@ public:
 
     InorderBinarySearch(const std::vector<int> &v) : elems(v) {
         std::sort(elems.begin(), elems.end());
+        elems.erase(std::unique(elems.begin(), elems.end()), elems.end());
     }
 
     int pred(int x) const {

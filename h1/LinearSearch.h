@@ -13,6 +13,7 @@ public:
 
     LinearSearch(std::vector<int> v) : elems(v) {
         std::sort(elems.begin(), elems.end());
+        elems.erase(std::unique(elems.begin(), elems.end()), elems.end());
     }
 
     virtual int pred(int x) const {

@@ -37,6 +37,7 @@ public:
     DFSBinarySearch(const std::vector<int> &v) : BinaryPredSearchTree(v) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
+        temp.erase(std::unique(temp.begin(), temp.end()), temp.end());
 
         // Add elements to tree so size becomes 2^x-1 for some x
         int height = 0;

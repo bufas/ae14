@@ -29,6 +29,7 @@ public:
     DFSBinarySearchExplicitInt(const std::vector<int> &v, int skew = 80) : BinaryExplicitIntPredSearchTree(v) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
+        temp.erase(std::unique(temp.begin(), temp.end()), temp.end());
         build(temp, 0, 0, temp.size() - 1, skew);
     }
 };

@@ -48,7 +48,10 @@ protected:
 public:
     BFSBinarySearch(const std::vector<int> &v) : BinaryPredSearchTree(v) {
         std::vector<int> temp(v);
+
         std::sort(temp.begin(), temp.end());
+        temp.erase(std::unique(temp.begin(), temp.end()), temp.end());
+
         build(temp);
     }
 
