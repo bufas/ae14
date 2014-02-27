@@ -11,38 +11,26 @@
 #include "Timer.h"
 #include "params/SkewParams.h"
 #include "../MemoryLayout.h"
+#include "PerfVar.h"
 
 #include "../PredSearchTreeFactory.h"
 
-using std::vector;
-
-/**
- * Use a better timer that can also measure cache misses and
- * branch mispredictions.
- */
-
-void bench(const PredSearchTree *t, const vector<int> &queries, int skew, int elements, int iterations, int trim) {
-    Timer timer;
-    std::vector<long> times; // Vector to hold time of all iterations
+void bench(const PredSearchTree *t, const std::vector<int> &queries, int skew, const SkewParams &p) {
+    Timer timer(PerfVar::BPU);
 
     // Run the predecessor search a number of times
     int dummy = 0;
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < p.iterations; i++) {
         timer.start();
-        for (int q = 0; q < queries.size(); q++) {
+        for (int q = 0; q < p.no_of_queries; q++) {
             dummy += t->pred(queries[q]);
         }
         timer.stop();
-        times.push_back(timer.get_microseconds());
     }
 
-    std::sort(times.begin(), times.end());
-
-    // Calculate average time
-    long sum = std::accumulate(times.begin() + trim, times.end() - trim, 0l);
-    long avg = sum / (iterations - (trim * 2));
-
-    printf("%d\t%d\t%lu\t%ld\t%ld\t%ld\n", skew, elements, queries.size(), avg, times[trim], times[times.size()-(trim + 1)]);
+    printf("%d\t%d\t%d\t%ld\t%ld\t%ld\n", 
+            skew, p.tree_size, p.no_of_queries,
+            timer.get_avg_time(p.trim), timer.get_lowest_time(p.trim), timer.get_highest_time(p.trim));
 
     // TODO use dummy, or the loop will be optimized away
     std::ofstream devnull;
@@ -61,7 +49,7 @@ void print_output_header(const SkewParams &p) {
     std::cout << "# \ttrim              : " << p.trim << std::endl;
     std::cout << "# \trandom seed       : " << p.random_seed << std::endl;
     std::cout << "#" << std::endl;
-    std::cout << "# Datalines: skew, tree size, #searches, avg. time in us, fastest time in us, slowest time in us" << std::endl;
+    std::cout << "# Datalines: skew, tree size, #searches, TIME[avg, fast, slow] in us" << std::endl;
 }
 
 /**
@@ -81,11 +69,11 @@ int main(int argc, char *argv[]) {
     print_output_header(p);
 
     // Generate random numbers for the queries
-    vector<int> queries(p.no_of_queries);
+    std::vector<int> queries;
     for (int q = 0; q < p.no_of_queries; q++) queries.push_back(rand());
 
     // Generate random numbers for the tree
-    vector<int> values(p.tree_size);
+    std::vector<int> values;
     for (int q = 0; q < p.tree_size; q++) values.push_back(rand());
 
     PredSearchTreeFactory tree_factory(MemoryLayout::DFS_EXPLICIT_INT);
@@ -94,6 +82,6 @@ int main(int argc, char *argv[]) {
         std::unique_ptr<PredSearchTree> t(tree_factory.createTree(values, skew));
 
         // Benchmark the predecessor searches
-        bench(t.get(), queries, skew, p.tree_size, p.iterations, p.trim);
+        bench(t.get(), queries, skew, p);
     }
 }
