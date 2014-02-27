@@ -2,80 +2,85 @@
 
 #include <vector>
 #include <algorithm>
-#include <cmath>
 #include "BinaryPredSearchTree.h"
 
-class DFSBinarySearch : public BinaryPredSearchTree {
+class DFSBinarySearch : public PredSearchTree {
 
 private:
-    std::vector<int> height_of_subtree;
+    std::vector<int> tree;
+    int height;
 
     void build(const std::vector<int> &v, int idx, int s, int e, int h) {
         if (s > e) return;
 
         const int mid = (s + e + 1) / 2;
         tree[idx] = v[mid];
-        height_of_subtree[idx] = h;
 
-        build(v, child_left(idx) , s      , mid - 1, h - 1);
-        build(v, child_right(idx), mid + 1, e      , h - 1);
+        build(v, child_left(idx)    , s      , mid - 1, h - 1);
+        build(v, child_right(idx, h), mid + 1, e      , h - 1);
+    }
+
+    void switch_minus_ones(int idx, int h) {
+        // If children is -1, set it to the same value as their parent. 
+        // This will not change the outcome of predecessor search
+        if (h > 1) {
+            if (tree[child_left(idx)] == -1) tree[child_left(idx)] = tree[idx];
+            if (tree[child_right(idx, h)] == -1) tree[child_right(idx, h)] = tree[idx];
+
+            switch_minus_ones(child_left(idx), h-1);
+            switch_minus_ones(child_right(idx, h), h-1);
+        }
     }
 
 protected:
     int child_left(int idx) const { return idx + 1; }
-    int child_right(int idx) const { return idx + (1 << (height_of_subtree[idx] - 1)); }
+    int child_right(int idx, int h) const { return idx + (1 << (h - 1)); }
     int get_root_idx() const { return 0; }
     
-    int parent(int idx) {
-        if (idx == child_right(idx - (1 << height_of_subtree[idx]))) return idx - (1 << height_of_subtree[idx]);
-        if (idx == child_right(idx - (1 << (height_of_subtree[idx] + 1)))) return idx - (1 << (height_of_subtree[idx] + 1));
-        return idx - 1;
-    }
-
 public:
 
-    DFSBinarySearch(const std::vector<int> &v) : BinaryPredSearchTree(v) {
+    DFSBinarySearch(const std::vector<int> &v) : tree(v.size(), -1) {
         std::vector<int> temp(v);
         std::sort(temp.begin(), temp.end());
         temp.erase(std::unique(temp.begin(), temp.end()), temp.end());
 
         // Add elements to tree so size becomes 2^x-1 for some x
-        int height = 0;
+        height = 0;
         while ((1 << height) - 1 < tree.size()) height++;
         tree.resize((1 << height) - 1, -1);
 
-        // Construct height_of_subtree
-        height_of_subtree = tree;
-        
         build(temp, 0, 0, temp.size() - 1, height);
+        switch_minus_ones(get_root_idx(), height);
     }
 
     /**
      * This is exactly the same as in BinaryPredSearchTree
-     * except for the line 
-     * if (tree[idx] == -1) break;
+     * except for the height variable
      */
-    int pred(int x) const {
-        if (tree.empty()) return -1;
+    virtual int pred(int x) const {
+        int pred = -1;
+        int idx  = get_root_idx(); // Set index to the root
 
-        int pred = 0;
-        int idx = get_root_idx(); // Set index to the root
-        bool only_left = true;
-
-        while (idx < tree.size()) {
-            if (tree[idx] == x) return x;
-            if (tree[idx] == -1) break;
+        for (int h = height; h > 0; h--) {
+            if (tree[idx] == x) return x; // This line can be removed
             
-            if (tree[idx] < x) {
-                pred = idx;
-                only_left = false;
-                idx = child_right(idx);
-            } else {
+            if (tree[idx] > x) {
                 idx = child_left(idx);
+            } else {
+                pred = tree[idx];
+                idx = child_right(idx, h);
             }
         }
 
-        return (only_left) ? -1 : tree[pred];
+        return pred;
+    }
+
+    virtual void print() const {
+        std::cout << "[ ";
+        for (auto it = tree.begin(); it != tree.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << "]" << std::endl;
     }
 
 
