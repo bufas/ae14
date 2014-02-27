@@ -23,7 +23,8 @@ enum class MemoryLayout {
     DFS_EXPLICIT_INT,
     VEB_EXPLICIT_INT,
 
-    CONSTANT
+    CONSTANT,
+    STDSET
 };
 
 /**
@@ -49,6 +50,7 @@ std::string as_string(const MemoryLayout &ml) {
         case MemoryLayout::VEB_EXPLICIT_INT:     return "explicit int vEB";
 
         case MemoryLayout::CONSTANT:             return "constant";
+        case MemoryLayout::STDSET:               return "std::set";
 
         default:                                 return nullptr;
     }

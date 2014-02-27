@@ -23,6 +23,7 @@
 #include "VEBBinarySearchExplicitInt.h"
 
 #include "ConstantSearch.h"
+#include "StdSetFind.h"
 
 class PredSearchTreeFactory {
 public:
@@ -46,6 +47,7 @@ public:
             case MemoryLayout::VEB_EXPLICIT_INT: return new VEBBinarySearchExplicitInt(values); 
 
             case MemoryLayout::CONSTANT: return new ConstantSearch(values); 
+            case MemoryLayout::STDSET: return new StdSetFind(values); 
 
             default:
                 std::cout << "THIS IS VERY WRONG!" << std::endl;
