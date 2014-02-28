@@ -27,7 +27,9 @@ elif [ "$1" == 'plot' ]; then
     rm -rf res/plots
     mkdir res/plots
     mkdir res/plots/all
-    python make_gnuplot_input.py > makeplot1.plot
+    mkdir res/plots/implicit
+    mkdir res/plots/explicit
+    python gen_gnuplot_input.py > makeplot1.plot
     gnuplot makeplot1.plot
     rm makeplot1.plot
 
