@@ -31,6 +31,7 @@ elif [ "$1" == 'plot' ]; then
     mkdir res/plots/explicit
     python gen_gnuplot_input.py > makeplot1.plot
     gnuplot makeplot1.plot
+    gnuplot skewplot.plot
     rm makeplot1.plot
 
 else

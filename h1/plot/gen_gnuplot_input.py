@@ -5,7 +5,7 @@ impl = {
     'explicit_ptr': ['bfs_explicit', 'dfs_explicit'],
     'explicit_int': ['bfs_explicit_int', 'dfs_explicit_int', 'veb_explicit_int'],
     'explicit':     ['bfs_explicit', 'dfs_explicit', 'bfs_explicit_int', 'dfs_explicit_int', 'veb_explicit_int'],
-    'all':          ['inorder', 'bfs', 'dfs', 'bfs_explicit', 'dfs_explicit', 'bfs_explicit_int', 'dfs_explicit_int', 'veb_explicit_int']
+    'all':          ['inorder', 'bfs', 'dfs', 'bfs_explicit_int', 'dfs_explicit_int', 'veb_explicit_int']
 }
 
 titles = {
@@ -80,6 +80,7 @@ print
 #===================================================#
 
 # Plot cache performance around cache sizes
+make_plot('mini_nocache_time.png',   impl['all'], 'L1_CACHE', blocks['time'],  1, 10)
 make_plot('small_l1cache_time.png',  impl['all'], 'L1_CACHE', blocks['time'],  8, 14)
 make_plot('medium_llcache_time.png', impl['all'], 'LL_CACHE', blocks['time'], 14, 19)
 make_plot('large_nocache_time.png',  impl['all'], 'LL_CACHE', blocks['time'], 18)
@@ -99,7 +100,7 @@ for b in ['miss', 'access', 'ratio']:
         make_plot('explicit/%s_%s.png' % (b, k), impl['explicit'], k, blocks[b])
 
 # Plot explicit int vs explicit ptr (only BFS and DFS)
-explicit_int_ptr = impl['explicit_int'] + impl['explicit_ptr'] # make union
+explicit_int_ptr = ['bfs_explicit_int', 'dfs_explicit_int'] + impl['explicit_ptr'] # make union
 make_plot('explicit_intVSptr_time.png', explicit_int_ptr, 'LL_CACHE', blocks['time'])
 for k in perf_labels:
     make_plot('explicit_intVSptr_%s.png' % k, explicit_int_ptr, k, blocks['miss'])
