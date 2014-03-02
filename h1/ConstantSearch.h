@@ -37,17 +37,14 @@ public:
 
     virtual int pred(int x) const {
         // Search the page x should reside in
-        std::cout<<"Searching "<<(x / page_size) * page_size<<" to "<<x<<std::endl;
         int p = pred_aux(elems, (x / page_size) * page_size, x);
         if (p != -1) return p;
 
         // If it is not found in that page, search in the index which page contains the predecessor
-        std::cout<<"Searching index 0 to "<<(x / page_size) - 1<<std::endl;
         p = pred_aux(pages, 0, (x / page_size) - 1);
         if (p == -1) return -1;
 
         // Search the returned page
-        std::cout<<"Predecessor is on page "<<p<<std::endl;
         return pred_aux(elems, p * page_size, (p + 1) * page_size);
     }
 
@@ -74,12 +71,12 @@ int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int s, int e)
     }
 
     // Linear search backwards
-    int block = e_div_32 - 1;
-    while (block >= 0) {
+    int res   = -1;
+    int block = s_div_32;
+    for (int block = s_div_32; block < e_div_32; ++block) {
         int search_val = search_int(a[block]);
-        if (search_val != -1) return block * 32 + search_val;
-        block--;
+        if (search_val != -1) res = block * 32 + search_val;
     }
 
-    return -1; // No predecessor found
+    return res; // No predecessor found
 }
