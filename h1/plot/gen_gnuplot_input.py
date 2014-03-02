@@ -16,7 +16,8 @@ titles = {
     'dfs_explicit':     'DFS EXplicit ptr',
     'bfs_explicit_int': 'BFS Explicit int',
     'dfs_explicit_int': 'DFS Explicit int',
-    'veb_explicit_int': 'vEB Explicit int'
+    'veb_explicit_int': 'vEB Explicit int',
+    'constant':         'constant'
 }
 
 perf_labels = {
@@ -104,3 +105,6 @@ explicit_int_ptr = ['bfs_explicit_int', 'dfs_explicit_int'] + impl['explicit_ptr
 make_plot('explicit_intVSptr_time.png', explicit_int_ptr, 'LL_CACHE', blocks['time'])
 for k in perf_labels:
     make_plot('explicit_intVSptr_%s.png' % k, explicit_int_ptr, k, blocks['miss'])
+
+# Plot constant search
+make_plot('constant_time.png', ['bfs', 'veb_explicit_int', 'constant'], 'BPU', blocks['time'])
