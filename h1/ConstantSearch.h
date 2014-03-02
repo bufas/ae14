@@ -45,20 +45,11 @@ public:
         if (p == -1) return -1;
 
         // Search the returned page
-        return pred_aux(elems, p * page_size, (p + 1) * page_size);
+        int start = p * page_size;
+        return pred_aux(elems, start, start + page_size);
     }
 
 };
-
-int search_int(unsigned int c, int max) {
-    if (c == 0 || max == 0) return -1;
-
-    for (int i = max; i > 0; --i) {
-        if ((c & (1 << i)) != 0) return i;
-    }
-
-    return 0;
-}
 
 template<std::size_t N>
 int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int s, int e) const {
@@ -71,12 +62,21 @@ int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int s, int e)
     }
 
     // Linear search backwards
-    int res   = -1;
-    int block = s_div_32;
-    for (int block = s_div_32; block < e_div_32; ++block) {
+    int res = -1;
+    for (int block = e_div_32-1; block >= s_div_32; --block) {
         int search_val = search_int(a[block]);
-        if (search_val != -1) res = block * 32 + search_val;
+        if (search_val != -1) return block * 32 + search_val;
     }
 
     return res; // No predecessor found
+}
+
+int search_int(unsigned int c, int max) {
+    if (c == 0 || max == 0) return -1;
+
+    for (int i = max; i > 0; --i) {
+        if ((c & (1 << i)) != 0) return i;
+    }
+
+    return 0;
 }
