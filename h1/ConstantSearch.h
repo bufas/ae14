@@ -17,7 +17,7 @@ private:
     std::array<unsigned int, 2048> pages;           // One page covers 2^11 (2048) ints
 
     template<std::size_t N>
-    int pred_aux(const std::array<unsigned int, N> &a, int x) const;
+    int pred_aux(const std::array<unsigned int, N> &a, int s, int e) const;
 
     void insert(int e) {
         int page = e/page_size;
@@ -36,9 +36,19 @@ public:
     }
 
     virtual int pred(int x) const {
-        int page = pred_aux(pages, x / page_size);
-        if (page == -1) return -1;
-        return pred_aux(elems, std::min(x, (page + 1) * page_size - 1));
+        // Search the page x should reside in
+        std::cout<<"Searching "<<(x / page_size) * page_size<<" to "<<x<<std::endl;
+        int p = pred_aux(elems, (x / page_size) * page_size, x);
+        if (p != -1) return p;
+
+        // If it is not found in that page, search in the index which page contains the predecessor
+        std::cout<<"Searching index 0 to "<<(x / page_size) - 1<<std::endl;
+        p = pred_aux(pages, 0, (x / page_size) - 1);
+        if (p == -1) return -1;
+
+        // Search the returned page
+        std::cout<<"Predecessor is on page "<<p<<std::endl;
+        return pred_aux(elems, p * page_size, (p + 1) * page_size);
     }
 
 };
@@ -46,24 +56,25 @@ public:
 int search_int(unsigned int c, int max) {
     if (c == 0 || max == 0) return -1;
 
-    for (int i = max; i >= 0; --i) {
+    for (int i = max; i > 0; --i) {
         if ((c & (1 << i)) != 0) return i;
     }
 
-    return -1; // This should not be reached
+    return 0;
 }
 
 template<std::size_t N>
-int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int x) const {
-    const int x_div_32 = x / 32;
+int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int s, int e) const {
+    const int s_div_32 = s / 32;
+    const int e_div_32 = e / 32;
 
     // Search the rest of the int
-    for (int i = x%32; i >= 0; i--) {
-        if ((a[x_div_32] & (1 << i)) != 0) return x_div_32 * 32 + i;
+    for (int i = e%32; i >= 0; --i) {
+        if ((a[e_div_32] & (1 << i)) != 0) return e_div_32 * 32 + i;
     }
 
     // Linear search backwards
-    int block = x_div_32 - 1;
+    int block = e_div_32 - 1;
     while (block >= 0) {
         int search_val = search_int(a[block]);
         if (search_val != -1) return block * 32 + search_val;
@@ -72,4 +83,3 @@ int ConstantSearch::pred_aux(const std::array<unsigned int, N> &a, int x) const 
 
     return -1; // No predecessor found
 }
-
