@@ -1,10 +1,10 @@
 #!/bin/bash
 
-rm -rf res
-mkdir res
-mkdir res/plots
 
 if [ "$1" == 'skew' ]; then
+
+    rm -rf res
+    mkdir res
 
     clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark_skew benchmark_skew.cpp
 
@@ -22,7 +22,22 @@ elif [ "$1" == 'clean' ]; then
 
     rm -rf res
 
+elif [ "$1" == 'plot' ]; then
+
+    rm -rf res/plots
+    mkdir res/plots
+    mkdir res/plots/all
+    mkdir res/plots/implicit
+    mkdir res/plots/explicit
+    python gen_gnuplot_input.py > makeplot1.plot
+    gnuplot makeplot1.plot
+    gnuplot skewplot.plot
+    rm makeplot1.plot
+
 else
+
+    rm -rf res
+    mkdir res
 
     clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark benchmark.cpp
 
@@ -39,7 +54,6 @@ else
     # done
 
     rm benchmark
-    gnuplot makeplot.plot
 
 fi
 

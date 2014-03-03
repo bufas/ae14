@@ -41,8 +41,8 @@ public:
             // case MemoryLayout::INORDER_EXPLICIT_INT: return new InorderBinarySearchExplicitInt(values); 
             case MemoryLayout::BFS_EXPLICIT: return new BFSBinarySearchExplicit(values, skew); 
             case MemoryLayout::BFS_EXPLICIT_INT: return new BFSBinarySearchExplicitInt(values, skew); 
-            case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values, skew); 
-            case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values, skew); 
+            case MemoryLayout::DFS_EXPLICIT: return new DFSBinarySearchExplicit(values); 
+            case MemoryLayout::DFS_EXPLICIT_INT: return new DFSBinarySearchExplicitInt(values); 
             // case MemoryLayout::VEB_EXPLICIT: return new VEBBinarySearchExplicit(values); 
             case MemoryLayout::VEB_EXPLICIT_INT: return new VEBBinarySearchExplicitInt(values); 
 
