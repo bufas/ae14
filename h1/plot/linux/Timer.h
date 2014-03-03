@@ -46,9 +46,19 @@ private:
     // Template as it must support both long and double
     template<typename T>
     T get_avg(const std::vector<T> &v, int exclude) {
-        T sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0l);
+        T sum = std::accumulate(v.begin() + exclude, v.end() - exclude, static_cast<T>(0));
         return sum / (v.size() - (exclude * 2));
     }
+    // long get_avg(const std::vector<long> &v, int exclude) {
+    //     long sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0l);
+    //     return sum / (v.size() - (exclude * 2));
+    // }
+    // double get_avg(const std::vector<double> &v, int exclude) {
+    //     double sum = std::accumulate(v.begin() + exclude, v.end() - exclude, 0.0);
+    //     return sum / (v.size() - (exclude * 2));
+    // }
+
+
 
     void sort_times()    { sort_counter(times,    times_sorted);    }
     void sort_misses()   { sort_counter(misses,   misses_sorted);   }
