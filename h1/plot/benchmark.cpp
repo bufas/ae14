@@ -81,7 +81,11 @@ int main(int argc, char *argv[]) {
 
     // Generate queries
     std::vector<int> queries;
-    for (int q = 0; q < p.no_of_queries; q++) queries.push_back(rand());
+    for (int q = 0; q < p.no_of_queries; q++) queries.push_back(rand());                            // Random
+    // for (int q = 0; q < p.no_of_queries; q++) queries.push_back((rand() % 1000) * 992693);       // Many of the same queries
+    // for (int q = 0; q < p.no_of_queries; q++) queries.push_back(2^31 - (rand() % (1 << 16)));    // Big elements
+    // for (int q = 0; q < p.no_of_queries; q++) queries.push_back(rand() % (1 << 16));             // Small elements
+    // int x = rand(); for (int q = 0; q < p.no_of_queries; q++) queries.push_back(x);              // All elements equal
 
     int tree_size = 1 << p.min_log_tree_size;
     PredSearchTreeFactory tree_factory(p.memory_layout);
