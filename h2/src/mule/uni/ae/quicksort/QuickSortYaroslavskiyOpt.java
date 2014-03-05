@@ -1,17 +1,11 @@
 package mule.uni.ae.quicksort;
 
 /**
- * Dual-pivot QuickSort implementation due to Vladimir Yaroslavskiy in his
- * paper <i>Dual-Pivot Quicksort</i>, 2009.
- * <p>
- * This implementation is identical to Yaroslavskiy's, with the exception of a
- * few variable names and modifications to, and additional, comments. It uses
- * a possibly sub-optimal algorithm for sorting the 5 indices, and the in-line
- * InsertionSort may be sup-optimal due to an additional assignment operation.
- *
- * @see QuickSortYaroslavskiyOpt
+ * Identical to {@link QuickSortYaroslavskiy} with the exception of using
+ * our custom {@link InsertionSort} implementation for small arrays, and
+ * our custom {@link Sort5} implementation for sorting the indices.
  */
-public class QuickSortYaroslavskiy {
+public class QuickSortYaroslavskiyOpt {
     private static final int DIST_SIZE = 13;
     private static final int TINY_SIZE = 17;
 
@@ -37,13 +31,7 @@ public class QuickSortYaroslavskiy {
 
         // InsertionSort for small sizes
         if (length < TINY_SIZE) {
-            for (int i = left + 1; i <= right; i++) {
-                for (int j = i; j > left && a[j] < a[j-1]; j--) {
-                    x = a[j-1];
-                    a[j-1] = a[j];
-                    a[j] = x;
-                }
-            }
+            InsertionSort.sort(a, left, right);
             return;
         }
 
@@ -56,15 +44,7 @@ public class QuickSortYaroslavskiy {
         int m5 = m4 + sixth;
 
         // 5-element sorting
-        if (a[m1] > a[m2]) { x = a[m1]; a[m1] = a[m2]; a[m2] = x; }
-        if (a[m4] > a[m5]) { x = a[m4]; a[m4] = a[m5]; a[m5] = x; }
-        if (a[m1] > a[m3]) { x = a[m1]; a[m1] = a[m3]; a[m3] = x; }
-        if (a[m2] > a[m3]) { x = a[m2]; a[m2] = a[m3]; a[m3] = x; }
-        if (a[m1] > a[m4]) { x = a[m1]; a[m1] = a[m4]; a[m4] = x; }
-        if (a[m3] > a[m4]) { x = a[m3]; a[m3] = a[m4]; a[m4] = x; }
-        if (a[m2] > a[m5]) { x = a[m2]; a[m2] = a[m5]; a[m5] = x; }
-        if (a[m2] > a[m3]) { x = a[m2]; a[m2] = a[m3]; a[m3] = x; }
-        if (a[m4] > a[m5]) { x = a[m4]; a[m4] = a[m5]; a[m5] = x; }
+        Sort5.sort(a, m1, m2, m3, m4, m5);
 
         // Pivots (2,4)
         int pivot1 = a[m2];

@@ -37,7 +37,8 @@ public class SortTest {
             {InsertionSort.class},
             {QuickSort.class},
             {QuickSortDual.class},
-            {QuickSortYaroslavskiy.class}
+            {QuickSortYaroslavskiy.class},
+            {QuickSortYaroslavskiyOpt.class}
         });
     }
 
