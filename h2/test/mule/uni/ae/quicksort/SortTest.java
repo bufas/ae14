@@ -36,7 +36,8 @@ public class SortTest {
         return Arrays.asList(new Object[][]{
             {InsertionSort.class},
             {QuickSort.class},
-            {QuickSortDual.class}
+            {QuickSortDual.class},
+            {QuickSortYaroslavskiy.class}
         });
     }
 
