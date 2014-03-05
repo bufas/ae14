@@ -14,3 +14,11 @@
 
 # Mac junk
 .DS_Store
+
+# Java
+*.class
+
+# IntelliJ
+*.iml
+.idea/
+out/
