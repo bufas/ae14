@@ -24,11 +24,14 @@ elif [ "$1" == 'clean' ]; then
 
 elif [ "$1" == 'plot' ]; then
 
-    rm -rf res/plots
-    mkdir res/plots
-    mkdir res/plots/all
-    mkdir res/plots/implicit
-    mkdir res/plots/explicit
+    rm -rf res1/plots
+    mkdir res1/plots
+    mkdir res1/plots/all
+    mkdir res1/plots/implicit
+    mkdir res1/plots/explicit
+    mkdir res1/plots/big_queries
+    mkdir res1/plots/small_queries
+    mkdir res1/plots/same_queries
     python gen_gnuplot_input.py > makeplot1.plot
     gnuplot makeplot1.plot
     gnuplot skewplot.plot
@@ -41,17 +44,17 @@ else
 
     clang++ -O3 -std=c++11 -stdlib=libc++ -o benchmark benchmark.cpp
 
-    ./benchmark bfs BPU 10 22 100000 100 5 # > res/constant.BPU.bench.data
-    # perf_vars="BPU"
-    # layouts="bfs constant"
+    # ./benchmark bfs BPU 1 25 100000 100 5 > res/constant.BPU.bench.data
+    perf_vars="BPU"
+    layouts="stdset"
 
-    # for perf in ${perf_vars}
-    # do
-    #     for layout in ${layouts}
-    #     do
-    #         ./benchmark ${layout} ${perf} 10 12 100000 100 5 > res/${layout}.${perf}.bench.data
-    #     done
-    # done
+    for perf in ${perf_vars}
+    do
+        for layout in ${layouts}
+        do
+            ./benchmark ${layout} ${perf} 1 21 100000 100 5 0 1337 > res/${layout}.${perf}.bench.data
+        done
+    done
 
     rm benchmark
 

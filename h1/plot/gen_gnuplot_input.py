@@ -9,6 +9,7 @@ impl = {
 }
 
 titles = {
+    'linear':           'Linear',
     'inorder':          'Inorder',
     'bfs':              'BFS',
     'dfs':              'DFS',
@@ -17,7 +18,9 @@ titles = {
     'bfs_explicit_int': 'BFS Explicit int',
     'dfs_explicit_int': 'DFS Explicit int',
     'veb_explicit_int': 'vEB Explicit int',
-    'constant':         'constant'
+    'constant1':        'Constant (1 index)',
+    'constant2':        'Constant (2 indexes)',
+    'stdset':           'std::set'
 }
 
 perf_labels = {
@@ -36,7 +39,7 @@ blocks = {
 
 # Define helper functions
 def make_header(output, xlabel, ylabel):
-    print 'set output "res/plots/%s"' % output
+    print 'set output "res1/plots/%s"' % output
     print 'set xlabel "%s"' % xlabel
     print 'set ylabel "%s"' % ylabel
 
@@ -47,7 +50,7 @@ def make_header(output, xlabel, ylabel):
 #     block:  3 for time, 6 for perf miss, 9 for perf access, 12 for ratio
 #     start:  the dataline from which to start
 #     end:    plot only datalines up to this line
-def make_plot(output, impl, perf, block, start=1, end=0):
+def make_plot(output, impl, perf, block, start=1, end=0, folder=''):
     # Print the header
     make_header(output, 'log_2(#nodes)', perf_labels[perf][block/3 - 1])
 
@@ -62,11 +65,11 @@ def make_plot(output, impl, perf, block, start=1, end=0):
     for i in impl:
         endl = '' if (i == impl[-1]) else ', \\'
         if block == 12:
-            print '"res/%s.%s.bench.data" %s using (log($1)/log(2)):(100-$%d):(100-$%d):(100-$%d) title "%s" with errorlines%s' \
-                % (i, perf, every, block, block+1, block+2, titles[i], endl)
+            print '"res1/%s%s.%s.bench.data" %s using (log($1)/log(2)):(100-$%d):(100-$%d):(100-$%d) title "%s" with errorlines%s' \
+                % (folder, i, perf, every, block, block+1, block+2, titles[i], endl)
         else:
-            print '"res/%s.%s.bench.data" %s using (log($1)/log(2)):($%d/$2):($%d/$2):($%d/$2) title "%s" with errorlines%s' \
-                % (i, perf, every, block, block+1, block+2, titles[i], endl)
+            print '"res1/%s%s.%s.bench.data" %s using (log($1)/log(2)):($%d/$2):($%d/$2):($%d/$2) title "%s" with errorlines%s' \
+                % (folder, i, perf, every, block, block+1, block+2, titles[i], endl)
 
     # Print som blank space so the file becomes readable
     print
@@ -90,7 +93,7 @@ make_plot('small_l1cache.png',       impl['all'], 'L1_CACHE', blocks['miss'],  8
 make_plot('medium_llcache.png',      impl['all'], 'LL_CACHE', blocks['miss'], 14, 19)
 
 # Plot all, implicit, and explicit for every performance criteria
-make_plot('all/time.png',      impl['all'],      'LL_CACHE', blocks['time'])
+make_plot('all/time.png',      impl['all'] + ['constant2','stdset'], 'BPU', blocks['time'])
 make_plot('implicit/time.png', impl['implicit'], 'LL_CACHE', blocks['time'])
 make_plot('explicit/time.png', impl['explicit'], 'LL_CACHE', blocks['time'])
 
@@ -107,4 +110,19 @@ for k in perf_labels:
     make_plot('explicit_intVSptr_%s.png' % k, explicit_int_ptr, k, blocks['miss'])
 
 # Plot constant search
-make_plot('constant_time.png', ['bfs', 'veb_explicit_int', 'constant'], 'BPU', blocks['time'])
+make_plot('constant_time.png', ['bfs', 'constant1', 'constant2'], 'BPU', blocks['time'])
+
+# Plot linear search
+make_plot('linear_time.png', ['bfs', 'linear'], 'BPU', blocks['time'], 1, 12)
+
+# Plot std::set search
+make_plot('stdset_time.png', ['bfs', 'stdset'], 'BPU', blocks['time'])
+
+# Plot nonrandom queries
+make_plot('big_queries/time.png',   impl['all'], 'LL_CACHE', blocks['time'], 1, 0, 'big_queries/')
+make_plot('small_queries/time.png', impl['all'], 'LL_CACHE', blocks['time'], 1, 0, 'small_queries/')
+make_plot('same_queries/time.png',  impl['all'], 'LL_CACHE', blocks['time'], 1, 0, 'same_queries/')
+for k in perf_labels:
+    make_plot('big_queries/%s.png' % k,   impl['all'], k, blocks['miss'], 1, 0, 'big_queries/')
+    make_plot('small_queries/%s.png' % k, impl['all'], k, blocks['miss'], 1, 0, 'small_queries/')
+    make_plot('same_queries/%s.png' % k,  impl['all'], k, blocks['miss'], 1, 0, 'same_queries/')
