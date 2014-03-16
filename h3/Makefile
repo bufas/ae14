@@ -34,25 +34,3 @@ ticket:
 	$(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
 
 .PHONY: clean
-
-
-
-
-
-# CC=clang++
-# CFLAGS=-c -Wall -std=c++11
-# LDFLAGS=
-# EXECUTABLE=bin/test
-
-# all: test
-	
-# test: build/full.o build/RSNaive.o
-# 	$(CC) $(LDFLAGS) build/full.o -o $(EXECUTABLE)
-
-# full.o: full.cpp
-# 	$(CC) $(CFLAGS) full.cpp
-
-# RSNaive.o: src/RSNaive.cpp
-
-# clean: 
-# 	rm -rf build/*
