@@ -6,7 +6,8 @@ TARGET := bin/runner
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -std=c++11
+CFLAGS := -g -Wall -std=c++11 -stdlib=libc++
+LDFLAGS := -stdlib=libc++
 LIB := 
 INC := -I include
 
@@ -26,7 +27,7 @@ clean:
 tester: $(OBJECTS)
 	@mkdir -p $(BUILDDIR)
 	$(CC) $(CFLAGS) $(INC) -c -o build/tester.o test/tester.cpp
-	$(CC) $(INC) build/tester.o $^ -o bin/test $(LIB)
+	$(CC) $(LDFLAGS) $(INC) build/tester.o $^ -o bin/test $(LIB)
 
 
 # Spikes
