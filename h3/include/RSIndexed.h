@@ -25,7 +25,7 @@ public:
     ~RSIndexed() {}
 
     int rank(const int x) const {
-        return index[x/64] + __builtin_popcount(values[x/64] >> (64 - (x%64)));
+        return index[x/64] + __builtin_popcountl(values[x/64] >> (64 - (x%64)));
     }
 
     int select(const int x) const {
