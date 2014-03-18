@@ -30,8 +30,13 @@ tester: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(INC) build/tester.o $^ -o bin/test $(LIB)
 
 
+# Benchmarks
+bench:
+	$(CC) $(CFLAGS) $(INC) -o bin/bench bench/benchmark.cpp
+
+
 # Spikes
 ticket:
 	$(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
 
-.PHONY: clean
+.PHONY: clean bench
