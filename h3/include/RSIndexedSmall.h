@@ -67,17 +67,22 @@ public:
             total_acc += __builtin_popcountl(v[i]);
         }
 
-        // Print the index
-        std::cout << "INDEX" << std::endl;
-        for (int i = 0; i < index.size(); ++i) {
-            auto res = itoa(index[i]);
-            for (int x = 0; x < res.size(); x++) {
-                if (x == 32 || x == 34 || x == 44 || x == 54) std::cout << " ";
-                std::cout << res[x];
-            }
-            std::cout << std::endl;
+        // Put the rest in the next block (TODO test this for correctness)
+        if (cur_block < 3) {
+            index[v.size() / 32] = index[v.size() / 32] | block_acc << (10 * (2-cur_block));
         }
-        std::cout << std::endl << std::endl;
+
+        // Print the index
+        // std::cout << "INDEX" << std::endl;
+        // for (int i = 0; i < index.size(); ++i) {
+        //     auto res = itoa(index[i]);
+        //     for (int x = 0; x < res.size(); x++) {
+        //         if (x == 32 || x == 34 || x == 44 || x == 54) std::cout << " ";
+        //         std::cout << res[x];
+        //     }
+        //     std::cout << std::endl;
+        // }
+        // std::cout << std::endl << std::endl;
     }
 
     ~RSIndexedSmall() {}
@@ -110,27 +115,27 @@ public:
     int select(const int x) const {
         // Binary search on the index (TODO: beware of, if x = index value)
         int min = 0;
-        int max = index.size();
+        int max = index.size() - 1;
         while (min < max) {
-            int mid = (min + max) / 2;
-            if ((index[mid] >> 32) == x) { min = mid; break; } // This is wrong, as the block before could be empty in which case we should go even further back
-            if ((index[mid] >> 32) < x) min = mid + 1;
+            int mid = (min + max + 1) / 2;
+            // if ((index[mid] >> 32) == x) { min = mid; break; } // This is wrong, as the block before could be empty in which case we should go even further back
+            if ((index[mid] >> 32) < x) min = mid;
             else max = mid - 1;
         }
 
-        std::cout << "searcing block " << min-1 << std::endl;
+        // std::cout << "searcing block " << min << std::endl;
 
         // This is the block that contains the result
-        int block = min - 1;
-        int newx = x - (index[block] >> 32);
+        const int block = min;
+        const int newx = x - (index[block] >> 32);
 
-        std::cout << "newx = " << newx << std::endl;
+        // std::cout << "newx = " << newx << std::endl;
 
         int subblock1 = newx - ((index[block] << 34) >> 54);
         int subblock2 = subblock1 - ((index[block] << 44) >> 54);
         int subblock3 = subblock2 - ((index[block] << 54) >> 54);
 
-        std::cout << "subblocks = ["<<subblock1<<", "<<subblock2<<", "<<subblock3<<"]" << std::endl;
+        // std::cout << "subblocks = ["<<subblock1<<", "<<subblock2<<", "<<subblock3<<"]" << std::endl;
 
         // Search the secondary index
         int startidx, offset;
@@ -138,36 +143,36 @@ public:
             // x is in the first block
             startidx = (block * 32);
             offset = newx;
-            std::cout << "Searching block one.";
+            // std::cout << "Searching block one.";
         } else if (subblock2 <= 0) {
             // x is in the second block
-            startidx = (block * 32) + 512;
+            startidx = (block * 32) + 8;
             offset = subblock1;
-            std::cout << "Searching block two.";
+            // std::cout << "Searching block two.";
         } else if (subblock3 <= 0) {
             // x is in the third block
-            startidx = (block * 32) + 1024;
+            startidx = (block * 32) + 16;
             offset = subblock2;
-            std::cout << "Searching block three.";
+            // std::cout << "Searching block three.";
         } else {
             // x is in the fourth block
-            startidx = (block * 32) + 1536;
+            startidx = (block * 32) + 24;
             offset = subblock3;
-            std::cout << "Searching block four.";
+            // std::cout << "Searching block four.";
         }
-        std::cout << " startidx="<<startidx<<" offset="<<offset << std::endl;
+        // std::cout << " startidx="<<startidx<<" offset="<<offset << std::endl;
 
         // Search the subblock by popcounting
         for (int i = 0; i < 8; ++i) {
             int popcnt = __builtin_popcountl(values[startidx + i]);
-            std::cout << "popcnt = " << popcnt << " offset = " << offset << std::endl;
+            // std::cout << "popcnt = " << popcnt << " offset = " << offset << std::endl;
             if (popcnt >= offset) {
-                std::cout << "final stretch. Finding bit " << offset << " in " << values[startidx+i]<< std::endl;
+                // std::cout << "final stretch. Finding bit " << offset << " in " << values[startidx+i]<< std::endl;
                 // The bit is in this word, search it bit by bit
                 for (int q = 0; q < 64; ++q) {
-                    std::cout << "Iteration " << q << " of the inner loop" << std::endl;
+                    // std::cout << "Iteration " << q << " of the inner loop" << std::endl;
                     offset -= (values[startidx + i] >> q) & 1;
-                    if (offset == 0) return startidx + (i * 64) + q + 1;
+                    if (offset == 0) return ((startidx + i) * 64) + q + 1;
                 }
             }
             offset -= popcnt;

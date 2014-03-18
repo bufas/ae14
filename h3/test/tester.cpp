@@ -80,8 +80,7 @@ void test_all_ones() {
 
     for (int i = 1; i < N * 64; ++i) {
         BOOST_CHECK( rs.rank(i) == i);
-        if ( rs.rank(i) != i ) std::cout << "rs.rank("<<i<<") = " << rs.rank(i) << std::endl;
-        // BOOST_CHECK( rs.select(i) == i);
+        BOOST_CHECK( rs.select(i) == i);
     }
 }
 
@@ -96,7 +95,11 @@ void test_alternating_ones() {
     for (int i = 1; i < N * 64; ++i) {
         BOOST_CHECK( rs.rank(i) == (i/2));
         if ( rs.rank(i) != (i/2) ) std::cout << "rs.rank("<<i<<") = " << rs.rank(i) << std::endl;
-        // BOOST_CHECK( rs.select(i) == i);
+    }
+
+    for (int i = 1; i < N * 32; ++i) {
+        BOOST_CHECK( rs.select(i) == 2*i );
+        if ( rs.select(i) != 2*i ) std::cout << "rs.select("<<i<<") = " << rs.select(i) << std::endl;
     }
 }
 
