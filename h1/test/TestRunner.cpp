@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
         MemoryLayout::DFS_EXPLICIT,
         MemoryLayout::DFS_EXPLICIT_INT,
         // MemoryLayout::VEB_EXPLICIT,
-        MemoryLayout::VEB_EXPLICIT_INT
-        // MemoryLayout::CONSTANT
+        MemoryLayout::VEB_EXPLICIT_INT,
+        MemoryLayout::CONSTANT
     };
 
     for (std::vector<MemoryLayout>::iterator it = mls.begin(); it != mls.end(); ++it) {
