@@ -1,16 +1,17 @@
 package mule.uni.ae.quicksort;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 
 /**
- * A simple implementation of standard QuickSort with a single pivot, due to
- * Cormen et al. in <i>Introduction to Algorithms, 3rd Edition</i>.
+ * An iterative implementation of standard QuickSort with a single pivot,
+ * based on the {@link QuickSort} implementation.
  * <p>
- * This algorithm uses a single pivot, which is always selected as the final
- * element in a given range.
+ * The purpose of this iterative implementation is to provide a version of
+ * standard QuickSort that doesn't result in stack overflow due to massive
+ * call stacks.
  */
-public class QuickSort {
+public class QuickSortIte {
     /**
      * Sort the given array.
      *
@@ -32,11 +33,35 @@ public class QuickSort {
      * @param r index of the last element in the range
      */
     public static void sort(int[] a, int p, int r) {
-//        comparisons++;
-        if (p < r) {
+        // Stacks to keep track of p's and q's
+        Deque<Integer> ps = new LinkedList<>();
+        Deque<Integer> rs = new LinkedList<>();
+
+        // Start off with the end points
+        ps.push(p);
+        rs.push(r);
+
+        while (!ps.isEmpty()) {
+//            comparisons++;
+            p = ps.poll();
+            r = rs.poll();
+
+            // Stop condition
+//            comparisons++;
+            if (p >= r) {
+                continue;
+            }
+
+            // Partition the array
             int q = partition(a, p, r);
-            sort(a, p, q - 1);
-            sort(a, q + 1, r);
+
+            // Left
+            ps.push(p);
+            rs.push(q - 1);
+
+            // Right
+            ps.push(q + 1);
+            rs.push(r);
         }
     }
 
@@ -44,6 +69,7 @@ public class QuickSort {
         int x = a[r];
         int i = p - 1;
         for (int j = p; j < r; j++) {
+//            comparisons++;
             if (a[j] <= x) {
                 i++;
                 int tmp = a[i];

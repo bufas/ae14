@@ -2,11 +2,13 @@ package mule.uni.ae.quicksort;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import mule.uni.ae.quicksort.util.Permutation;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import mule.uni.ae.quicksort.util.Permutation;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -34,11 +36,16 @@ public class SortTest {
     @Parameters
     public static Collection<Object[]> sorts() {
         return Arrays.asList(new Object[][]{
-            {InsertionSort.class},
-            {QuickSort.class},
-            {QuickSortDual.class},
-            {QuickSortYaroslavskiy.class},
-            {QuickSortYaroslavskiyOpt.class}
+//            {InsertionSort.class},
+//            {QuickSort.class},
+//            {QuickSortIte.class},
+//            {QuickSortMedian3.class},
+//            {QuickSortVogella.class},
+//            {QuickSortDual.class},
+            {QuickSortTriple.class},
+//            {QuickSortYaroslavskiy.class},
+//            {QuickSortYaroslavskiyOpt.class},
+//            {QuickSortYaroslavskiyOpt13.class},
         });
     }
 
@@ -199,6 +206,39 @@ public class SortTest {
             sort.invoke(null, a);
             verifySorted(a);
         }
+    }
+
+
+
+    //-------------------------------------------------------------------------
+    //
+    //      Misc correctness tests
+    //
+    //-------------------------------------------------------------------------
+
+    @Test
+    public void size0_noException() throws Exception {
+        int[] a = {};
+        sort.invoke(null, a);
+    }
+
+    @Test
+    public void size1_noException() throws Exception {
+        int[] a = {1};
+        sort.invoke(null, a);
+        assertEquals(1, a[0]);
+    }
+
+    @Test
+    public void size2_sorted() throws Exception {
+        int[] a = {1,2};
+        int[] b = {2,1};
+
+        sort.invoke(null, a);
+        verifySorted(a);
+
+        sort.invoke(null, b);
+        verifySorted(b);
     }
 
 

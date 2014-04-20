@@ -1,28 +1,18 @@
 package mule.uni.ae.quicksort;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 /**
- * A simple implementation of standard QuickSort with a single pivot, due to
- * Cormen et al. in <i>Introduction to Algorithms, 3rd Edition</i>.
- * <p>
- * This algorithm uses a single pivot, which is always selected as the final
- * element in a given range.
+ * Simple variation of the standard QuickSort, where the single pivot is
+ * always the center element.
  */
-public class QuickSort {
+public class QuickSortMedian3 {
     /**
      * Sort the given array.
      *
      * @param a an array
      */
     public static void sort(int[] a) {
-//    public static int sort(int[] a) {
-//        comparisons = 0;
         sort(a, 0, a.length - 1);
-//        return comparisons;
     }
-//    private static int comparisons;
 
     /**
      * Sort the given array in the range {@code [p;r]} (both inclusive).
@@ -32,7 +22,6 @@ public class QuickSort {
      * @param r index of the last element in the range
      */
     public static void sort(int[] a, int p, int r) {
-//        comparisons++;
         if (p < r) {
             int q = partition(a, p, r);
             sort(a, p, q - 1);
@@ -41,19 +30,27 @@ public class QuickSort {
     }
 
     private static int partition(int[] a, int p, int r) {
+        // Select pivot as median of 3
+        int m = (p + r) >>> 1;
+        Sort3.sort(a, p, m, r);
+
+        // Swap the pivot to the end
+        int tmp = a[m];
+        a[m] = a[r];
+        a[r] = tmp;
+
         int x = a[r];
         int i = p - 1;
         for (int j = p; j < r; j++) {
             if (a[j] <= x) {
                 i++;
-                int tmp = a[i];
+                tmp = a[i];
                 a[i] = a[j];
                 a[j] = tmp;
             }
-//            comparisons++;
         }
         i++;
-        int tmp = a[i];
+        tmp = a[i];
         a[i] = a[r];
         a[r] = tmp;
         return i;

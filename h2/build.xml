@@ -1,0 +1,77 @@
+<project name="AE14" default="debug" basedir=".">
+    <property name="bench-jar" value="bench"/>
+
+    <property name="src"  location="src"/>
+    <property name="bin"  location="build"/>
+    <property name="lib"  location="lib"/>
+    <property name="test" location="test"/>
+
+    <path id="classpath">
+        <fileset dir="${lib}" includes="*.jar"/>
+    </path>
+
+    <manifestclasspath property="mf.classpath" jarfile="${bench-jar}.jar">
+        <classpath refid="classpath"/>
+    </manifestclasspath>
+
+
+    <!-- ================================================================== -->
+    <!--     Main targets                                                   -->
+    <!-- ================================================================== -->
+    <target name="bench" depends="build,package"/>
+    <target name="debug" depends="build-debug,package"/>
+
+
+    <!-- ================================================================== -->
+    <!--     Build targets                                                  -->
+    <!-- ================================================================== -->
+    <target name="build">
+        <mkdir dir="${bin}"/>
+        <javac target="1.7" source="1.7"
+               srcdir="${src}" destdir="${bin}"
+               debug="off" includeantruntime="no" classpathref="classpath"/>
+        <javac target="1.7" source="1.7"
+               srcdir="${test}" destdir="${bin}"
+               debug="off" includeantruntime="no" classpathref="classpath">
+            <exclude name="**/*Test.java"/>
+        </javac>
+    </target>
+
+    <target name="build-debug">
+        <mkdir dir="${bin}"/>
+        <javac target="1.7" source="1.7"
+               srcdir="${src}" destdir="${bin}"
+               debug="on" debuglevel="lines,vars,source"
+               includeantruntime="no" classpathref="classpath"/>
+        <javac target="1.7" source="1.7"
+               srcdir="${test}" destdir="${bin}"
+               debug="on" debuglevel="lines,vars,source"
+               includeantruntime="no" classpathref="classpath">
+            <exclude name="**/*Test.java"/>
+        </javac>
+    </target>
+
+
+    <!-- ================================================================== -->
+    <!--     Package targets                                                -->
+    <!-- ================================================================== -->
+    <target name="package">
+        <delete file="${bench-jar}.jar"/>
+        <jar jarfile="${bench-jar}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="mule.uni.ae.quicksort.SingleBench"/>
+                <attribute name="Class-Path" value=". ${mf.classpath}"/>
+            </manifest>
+            <fileset dir="${bin}"/>
+        </jar>
+    </target>
+
+
+    <!-- ================================================================== -->
+    <!--     Misc targets                                                   -->
+    <!-- ================================================================== -->
+    <target name="clean">
+        <delete dir="${bin}"/>
+        <delete file="${bench-jar}.jar"/>
+    </target>
+</project>

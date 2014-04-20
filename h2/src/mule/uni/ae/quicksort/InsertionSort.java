@@ -29,14 +29,37 @@ public class InsertionSort {
      * @param right index of the last element in the range
      */
     public static void sort(int[] a, int left, int right) {
+//    public static int sort(int[] a, int left, int right) {
+//        int comparisons = 0;
         for (int i = left + 1; i <= right; i++) {
             int x = a[i];
             int j = i;
             while (j > left && a[j-1] > x) {
+//                comparisons++;
                 a[j] = a[j-1];
                 j--;
             }
             a[j] = x;
+        }
+//        return comparisons;
+    }
+
+    /**
+     * Sort the given indices of the given array.
+     *
+     * @param a an array
+     * @param is an array of indices of length at most a.length
+     */
+    public static void sort(int[] a, int[] is) {
+        int left = is[0];
+        for (int i = 1; i < is.length; i++) {
+            int x = a[is[i]];
+            int j = i;
+            while (is[j] > left && a[is[j-1]] > x) {
+                a[is[j]] = a[is[j-1]];
+                j--;
+            }
+            a[is[j]] = x;
         }
     }
 }

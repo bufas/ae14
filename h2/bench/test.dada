@@ -1,0 +1,6 @@
+
+classic_ite
+10547900,cache-references,1.03%
+87183,cache-misses,2.32%
+39166534,branches,0.83%
+2253770,branch-misses,1.74%

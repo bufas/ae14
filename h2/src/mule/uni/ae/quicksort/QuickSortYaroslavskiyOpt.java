@@ -15,8 +15,12 @@ public class QuickSortYaroslavskiyOpt {
      * @param a an array
      */
     public static void sort(int[] a) {
+//    public static int sort(int[] a) {
+//        comparisons = 0;
         sort(a, 0, a.length - 1);
+//        return comparisons;
     }
+//    private static int comparisons;
 
     /**
      * Sort the given array in the range {@code [left;right]} (both inclusive).
@@ -30,7 +34,9 @@ public class QuickSortYaroslavskiyOpt {
         int x;
 
         // InsertionSort for small sizes
+//        comparisons++;
         if (length < TINY_SIZE) {
+//            comparisons += InsertionSort.sort(a, left, right);
             InsertionSort.sort(a, left, right);
             return;
         }
@@ -44,6 +50,7 @@ public class QuickSortYaroslavskiyOpt {
         int m5 = m4 + sixth;
 
         // 5-element sorting
+//        comparisons += Sort5.sort(a, m1, m2, m3, m4, m5);
         Sort5.sort(a, m1, m2, m3, m4, m5);
 
         // Pivots (2,4)
@@ -51,6 +58,7 @@ public class QuickSortYaroslavskiyOpt {
         int pivot2 = a[m4];
 
         boolean diffPivots = pivot1 != pivot2;
+//        comparisons++;
         a[m2] = a[left];
         a[m4] = a[right];
 
@@ -61,12 +69,16 @@ public class QuickSortYaroslavskiyOpt {
         // Sorting
         if (diffPivots) {
             for (int k = less; k <= great; k++) {
+//                comparisons++;
                 x = a[k];
                 if (x < pivot1) {
                     a[k] = a[less];
                     a[less++] = x;
                 } else if (x > pivot2) {
+//                    comparisons++;
                     while (a[great] > pivot2 && k < great) {
+//                        comparisons++;
+//                        comparisons++;
                         great--;
                     }
                     a[k] = a[great];
@@ -76,13 +88,17 @@ public class QuickSortYaroslavskiyOpt {
                         a[k] = a[less];
                         a[less++] = x;
                     }
+//                    comparisons++;
                 }
+//                comparisons++;
             }
         } else {
             // This block is almost identical to the one above;
             // differences marked by comments
             for (int k = less; k <= great; k++) {
+//                comparisons++;
                 x = a[k];
+//                comparisons++;
                 if (x == pivot1) {          //
                     continue;               // New block
                 }                           //
@@ -91,6 +107,8 @@ public class QuickSortYaroslavskiyOpt {
                     a[less++] = x;
                 } else {                    // else-if  -->  else
                     while (a[great] > pivot2 && k < great) {
+//                        comparisons++;
+//                        comparisons++;
                         great--;
                     }
                     a[k] = a[great];
@@ -100,9 +118,12 @@ public class QuickSortYaroslavskiyOpt {
                         a[k] = a[less];
                         a[less++] = x;
                     }
+//                    comparisons++;
                 }
+//                comparisons++;
             }
         }
+//        comparisons++;
         // Swap
         a[left] = a[less-1];
         a[less-1] = pivot1;
@@ -119,11 +140,13 @@ public class QuickSortYaroslavskiyOpt {
             // Again, this block closely resembles the one above;
             // differences marked by comments
             for (int k = less; k <= great; k++) {
+//                comparisons++;
                 x = a[k];
                 if (x == pivot1) {
                     a[k] = a[less];
                     a[less++] = x;
                 } else if (x == pivot2) {   // '>'  -->  '=='
+//                    comparisons++;
                     a[k] = a[great];        // while-loop removed
                     a[great--] = x;
                     x = a[k];
@@ -131,13 +154,17 @@ public class QuickSortYaroslavskiyOpt {
                         a[k] = a[less];
                         a[less++] = x;
                     }
+//                    comparisons++;
                 }
+//                comparisons++;
             }
         }
+//        comparisons += 2;
 
         // Center part
         if (diffPivots) {
             sort(a, less, great);
         }
+//        comparisons++;
     }
 }
